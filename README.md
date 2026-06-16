@@ -16,15 +16,33 @@ This project is designed to learn and master AI Agents by building a multi-agent
 - **Phase 5**: Distributed system architecture
 
 
-# Sprint 1
+## Current Progress: Phase 1 Development
+
+### Sprint 1
 
 Implemented:
 - ReadFileTool
 - SearchCodeTool
 - BugFix Agent skeleton
 
-Next:
-- Code indexing
-- PostgreSQL
-- pgvector
-- RAG retriever
+### Sprint 2
+
+- PostgreSQL + pgvector
+- Reflection Store
+- Historical Bug Store
+
+### Sprint 3
+
+- Retriever
+- Hybrid Search (BM25 + Vector)
+
+### Sprint 4
+
+- Episode Memory
+- Reflection Generator
+- Memory Promotion
+
+### Sprint 5
+
+- OpenAI/Ollama Integration
+- Full Agent Loop
