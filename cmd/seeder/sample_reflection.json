@@ -1,0 +1,14 @@
+[
+  {
+    "content":
+    "Always check nil after repository call"
+  },
+  {
+    "content":
+    "Validate returned object before access"
+  },
+  {
+    "content":
+    "Always handle transaction rollback"
+  }
+]
