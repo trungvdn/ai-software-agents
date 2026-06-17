@@ -150,6 +150,7 @@ func parseAnalysisResponse(response string) *AnalysisResponse {
 // findSection finds the index of a section keyword
 func findSection(text, keyword string) int {
 	keyword = strings.ToLower(keyword)
+	text = strings.ToLower(text)
 	for i := 0; i < len(text)-len(keyword); i++ {
 		if text[i:i+len(keyword)] == keyword {
 			return i

@@ -1,5 +1,7 @@
 package bugfix
 
+import "strings"
+
 type PromptBuilder struct {
 }
 

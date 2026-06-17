@@ -80,5 +80,15 @@ func (a *BugFixAgent) FixBug(
 		Analysis: responseLLM,
 	}
 	fmt.Println("LLM Response:", responseLLM)
+
+	// Change planning based on LLM response
+	planner := &LLMChangePlanner{llm: a.llm}
+	plan, err := planner.Plan(ctx, bugDescription, responseLLM)
+	if err != nil {
+		log.Printf("Error planning changes: %v", err)
+		return nil, err
+	}
+	response.Plan = plan
+
 	return response, nil
 }
