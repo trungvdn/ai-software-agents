@@ -60,11 +60,14 @@ func main() {
 		log.Fatalf("Failed to create Ollama client: %v", err)
 	}
 
+	planner := planner.NewLLMChangePlanner(ollamaClient)
+
 	fixBugAgent := bugfix.NewBugFixAgent(
 		retrieverAgent,
 		reRanker,
 		contextBuilder,
 		ollamaClient,
+		planner,
 	)
 	ctx := context.Background()
 	fixBugAgent.FixBug(ctx, "Fix nil pointer in UserService")
