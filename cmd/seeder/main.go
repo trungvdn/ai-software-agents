@@ -114,7 +114,7 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 
 	for _, query := range testQueries {
 		log.Printf("\nSearching for: '%s'", query)
-		results, err := retriever.RetrieveSimilar(ctx, query, 3)
+		results, err := retriever.Retrieve(ctx, query, 3)
 		if err != nil {
 			log.Fatalf("Failed to retrieve similar reflections: %v", err)
 		}
@@ -131,15 +131,22 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 					refl.Source,
 					refl.Content,
 				)
-				retriever.ReflectionRepository.IncrementUsageCount(ctx, refl.ID)
 				log.Printf("  Updated usage count for reflection ID: %s", refl.ID)
-				log.Printf("  Metadata: importanceScore=%s, usageCount=%s",
-					refl.Metadata["importanceScore"],
-					refl.Metadata["usageCount"],
-				)
+				log.Printf("  Importance Score: %.2f, Usage Count: %d", refl.Metadata.ImportanceScore, refl.Metadata.UsageCount)
+
 				log.Printf("  ---")
 				// Optionally, you can also update the importance score based on some logic here
 			}
 		}
+
+		// Inject LLM Context (for demonstration, we just print the retrieved reflections)
+
+		// Increase usage count for the retrieved reflections
+		var reflectionIDs []string
+		for _, refl := range results {
+			reflectionIDs = append(reflectionIDs, refl.ID)
+		}
+		retriever.ReflectionRepository.IncrementUsageCount(ctx, reflectionIDs)
+
 	}
 }

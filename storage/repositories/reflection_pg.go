@@ -57,7 +57,7 @@ func (r *ReflectionRepository) SearchSimilar(
 	limit int,
 ) ([]reflection.SimilarReflection, error) {
 	query := `
-		SELECT id, content, 1 - (embedding <=> $1) as similarity, usage_count, importance_score
+		SELECT id, content, embedding <=> $1 as similarity, usage_count, importance_score
 		FROM reflections
 		ORDER BY (embedding <-> $1::vector) ASC
 		LIMIT $2
@@ -85,12 +85,12 @@ func (r *ReflectionRepository) SearchSimilar(
 
 func (r *ReflectionRepository) IncrementUsageCount(
 	ctx context.Context,
-	id string,
+	id []string,
 ) error {
 	query := `
 		UPDATE reflections
 		SET usage_count = usage_count + 1, last_accessed = NOW()
-		WHERE id = $1
+		WHERE id = ANY($1)
 	`
 	_, err := r.db.ExecContext(ctx, query, id)
 	return err

@@ -2,7 +2,6 @@ package reflection
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
 	"github.com/trungvdn/ai-software-agents/shared/retrieval"
@@ -23,17 +22,17 @@ func NewReflectionRetriever(
 	}
 }
 
-func (r *ReflectionRetriever) RetrieveSimilar(
+func (r *ReflectionRetriever) Retrieve(
 	ctx context.Context,
-	text string,
-	limit int,
+	query string,
+	topK int,
 ) ([]retrieval.SearchResult, error) {
-	embedding, err := r.Embedder.Embed(ctx, text)
+	embedding, err := r.Embedder.Embed(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 
-	reflections, err := r.ReflectionRepository.SearchSimilar(ctx, embedding, limit)
+	reflections, err := r.ReflectionRepository.SearchSimilar(ctx, embedding, topK)
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +44,9 @@ func (r *ReflectionRetriever) RetrieveSimilar(
 			Content: ref.Reflection.Content,
 			Score:   ref.Similarity,
 			Source:  "reflection",
-			Metadata: map[string]string{
-				"importanceScore": fmt.Sprint(ref.Reflection.ImportanceScore),
-				"usageCount":      fmt.Sprint(ref.Reflection.UsageCount),
+			Metadata: retrieval.SearchMetadata{
+				ImportanceScore: ref.Reflection.ImportanceScore,
+				UsageCount:      ref.Reflection.UsageCount,
 			},
 		})
 	}

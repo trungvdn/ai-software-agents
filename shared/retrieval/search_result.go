@@ -6,5 +6,10 @@ type SearchResult struct {
 	Score   float64
 	Source  string
 
-	Metadata map[string]string
+	Metadata SearchMetadata
+}
+
+type SearchMetadata struct {
+	ImportanceScore float64
+	UsageCount      int
 }

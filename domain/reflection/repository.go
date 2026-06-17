@@ -16,6 +16,6 @@ type ReflectionRepository interface {
 
 	IncrementUsageCount(
 		ctx context.Context,
-		id string,
+		id []string,
 	) error
 }
