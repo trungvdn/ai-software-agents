@@ -21,28 +21,62 @@ This project is designed to learn and master AI Agents by building a multi-agent
 ### Sprint 1
 
 Implemented:
-- ReadFileTool
-- SearchCodeTool
-- BugFix Agent skeleton
+- ReadFileTool ✅
+- SearchCodeTool ✅
+- BugFix Agent skeleton ✅
 
 ### Sprint 2
 
-- PostgreSQL + pgvector
-- Reflection Store
-- Historical Bug Store
+- PostgreSQL + pgvector ✅
+- Reflection Store ✅
+- Historical Bug Store 
 
 ### Sprint 3
 
-- Retriever
-- Hybrid Search (BM25 + Vector)
+- Docker + pgvector            ✅
+- Embedding Provider           ✅
+- Reflection Repository        ✅
+- Semantic Search              ✅
+- SearchResult                 ✅
+- Typed Metadata               ✅
+- Reflection Retriever         ✅
+- Simple ReRanker              ✅
+- Usage Tracking               ✅
+- Cosine Similarity Search     ✅
+- Context Builder
 
 ### Sprint 4
 
-- Episode Memory
-- Reflection Generator
-- Memory Promotion
+- BugFix Agent v1
 
 ### Sprint 5
 
-- OpenAI/Ollama Integration
-- Full Agent Loop
+- Historical Bug Domain
+
+### Sprint 6
+
+- Multi Retrieval
+
+### Sprint 7
+
+- Memory Lifecycle
+
+### Sprint 8
+
+- Coding Standard Domain
+
+### Sprint 9
+
+- Judge Agent
+
+### Sprint 10
+
+- Code Retrieval
+
+### Sprint 11
+
+- Planner Agent
+
+### Sprint 12
+
+- AI Software Company v1
