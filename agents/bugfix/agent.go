@@ -1,36 +1,31 @@
 package bugfix
 
-import "fmt"
+import (
+	prompt_context "github.com/trungvdn/ai-software-agents/shared/context"
+	"github.com/trungvdn/ai-software-agents/shared/llm"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
+)
 
-type ReadFileTool interface {
-	Read(path string) (string, error)
+type BugFixAgent struct {
+	retriever retrieval.Retriever
+
+	reRanker retrieval.ReRanker
+
+	contextBuilder prompt_context.Builder
+
+	llm llm.Client
 }
 
-type SearchCodeTool interface {
-	Search(keyword string) ([]string, error)
-}
-
-type Agent struct {
-	readFile ReadFileTool
-	search   SearchCodeTool
-}
-
-func New(r ReadFileTool, s SearchCodeTool) *Agent {
-	return &Agent{
-		readFile: r,
-		search:   s,
+func NewBugFixAgent(
+	retriever retrieval.Retriever,
+	reRanker retrieval.ReRanker,
+	contextBuilder prompt_context.Builder,
+	llm llm.Client,
+) BugFixAgent {
+	return BugFixAgent{
+		retriever:      retriever,
+		reRanker:       reRanker,
+		contextBuilder: contextBuilder,
+		llm:            llm,
 	}
-}
-
-func (a *Agent) Run(query string) (string, error) {
-	results, err := a.search.Search(query)
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf(
-		"query=%s\nmatched_files=%v",
-		query,
-		results,
-	), nil
 }

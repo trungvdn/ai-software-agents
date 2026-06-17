@@ -10,5 +10,5 @@ type Builder interface {
 	Build(
 		ctx context.Context,
 		results []retrieval.SearchResult,
-	) (Context, error)
+	) (PromptContext, error)
 }

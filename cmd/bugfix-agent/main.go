@@ -1,25 +1,71 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 
-	"ai-software-agents/agents/bugfix"
-	"ai-software-agents/shared/tools"
+	"github.com/trungvdn/ai-software-agents/agents/bugfix"
+	"github.com/trungvdn/ai-software-agents/domain/reflection"
+	"github.com/trungvdn/ai-software-agents/internal/config"
+	"github.com/trungvdn/ai-software-agents/internal/database"
+	prompt_context "github.com/trungvdn/ai-software-agents/shared/context"
+	"github.com/trungvdn/ai-software-agents/shared/embedding"
+	"github.com/trungvdn/ai-software-agents/shared/llm"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
+
+	"github.com/trungvdn/ai-software-agents/storage/repositories"
 )
 
 func main() {
-	agent := bugfix.New(
-		tools.NewReadFileTool(),
-		tools.NewSearchCodeTool("."),
-	)
 
-	resp, err := agent.Run(
-		"GetUser",
-	)
-	if err != nil {
-		log.Fatal(err)
+	// Load configuration
+	cfg := config.Load()
+	if cfg.DatabaseURL == "" {
+		log.Fatal("DATABASE_URL environment variable is required")
+	}
+	if cfg.OllamaBaseURL == "" {
+		log.Fatal("OLLAMA_BASE_URL environment variable is required")
+	}
+	if cfg.OllamaModel == "" {
+		log.Fatal("OLLAMA_MODEL environment variable is required")
 	}
 
-	fmt.Println(resp)
+	// Connect to database
+	db, err := database.Connect(cfg.DatabaseURL)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	// Create repository
+	reflectionRepo := repositories.NewReflectionRepository(db)
+
+	// Create embedder
+	embedder := embedding.NewOllamaEmbedder(cfg.OllamaBaseURL, cfg.OllamaModel)
+
+	retrieverAgent := reflection.NewReflectionRetriever(
+		reflectionRepo,
+		embedder,
+	)
+
+	reRanker := &retrieval.SimpleReRanker{}
+
+	contextBuilder := prompt_context.NewReflectionContextBuilder()
+
+	ollamaClient, err := llm.NewOllamaClient(llm.OllamaConfig{
+		Endpoint: cfg.OllamaBaseURL,
+		Model:    "mistral",
+	})
+	if err != nil {
+		log.Fatalf("Failed to create Ollama client: %v", err)
+	}
+
+	fixBugAgent := bugfix.NewBugFixAgent(
+		retrieverAgent,
+		reRanker,
+		contextBuilder,
+		ollamaClient,
+	)
+	ctx := context.Background()
+	fixBugAgent.FixBug(ctx, "Fix nil pointer in UserService")
 }

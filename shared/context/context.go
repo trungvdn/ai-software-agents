@@ -1,5 +1,5 @@
 package context
 
-type Context struct {
+type PromptContext struct {
 	Content string
 }

@@ -1,5 +1,9 @@
 package llm
 
+import (
+	"context"
+)
+
 type Client interface {
-	Chat(prompt string) (string,error)
+	Chat(ctx context.Context, prompt string) (string, error)
 }
