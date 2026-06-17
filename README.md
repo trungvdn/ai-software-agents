@@ -11,7 +11,7 @@ This project is designed to learn and master AI Agents by building a multi-agent
 
 ```
 User:
-"I want to build a CRM for a clinic"
+"I want to build an intelligent information investment system"
 
             ↓
 
@@ -97,6 +97,9 @@ Historical Bug Store
 ## Sprint 3
 
 Docker + pgvector ✅
+
+```
+Docker + pgvector ✅
 Embedding Provider ✅
 Reflection Repository ✅
 Semantic Search ✅
@@ -107,6 +110,7 @@ Simple ReRanker ✅
 Usage Tracking ✅
 Cosine Similarity Search ✅
 Context Builder
+```
 
 ---
 
