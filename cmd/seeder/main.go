@@ -97,10 +97,10 @@ func embedAndSaveReflection(ctx context.Context, repo reflection.ReflectionRepos
 
 func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepository, embedder embedding.Embedder) {
 
-	retriever := &reflection.ReflectionRetriever{
-		ReflectionRepository: repo,
-		Embedder:             embedder,
-	}
+	retriever := reflection.NewReflectionRetriever(
+		repo,
+		embedder,
+	)
 
 	reRanker := &retrieval.SimpleReRanker{}
 
@@ -146,7 +146,7 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 		for _, refl := range results {
 			reflectionIDs = append(reflectionIDs, refl.ID)
 		}
-		retriever.ReflectionRepository.IncrementUsageCount(ctx, reflectionIDs)
+		retriever.repo.IncrementUsageCount(ctx, reflectionIDs)
 
 	}
 }

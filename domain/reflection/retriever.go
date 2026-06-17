@@ -8,8 +8,8 @@ import (
 )
 
 type ReflectionRetriever struct {
-	ReflectionRepository ReflectionRepository
-	Embedder             embedding.Embedder
+	repo     ReflectionRepository
+	embedder embedding.Embedder
 }
 
 func NewReflectionRetriever(
@@ -17,8 +17,8 @@ func NewReflectionRetriever(
 	embedder embedding.Embedder,
 ) *ReflectionRetriever {
 	return &ReflectionRetriever{
-		ReflectionRepository: repo,
-		Embedder:             embedder,
+		repo:     repo,
+		embedder: embedder,
 	}
 }
 
@@ -27,12 +27,12 @@ func (r *ReflectionRetriever) Retrieve(
 	query string,
 	topK int,
 ) ([]retrieval.SearchResult, error) {
-	embedding, err := r.Embedder.Embed(ctx, query)
+	embedding, err := r.embedder.Embed(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 
-	reflections, err := r.ReflectionRepository.SearchSimilar(ctx, embedding, topK)
+	reflections, err := r.repo.SearchSimilar(ctx, embedding, topK)
 	if err != nil {
 		return nil, err
 	}
