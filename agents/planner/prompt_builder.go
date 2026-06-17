@@ -7,13 +7,13 @@ type PlannerPromptBuilder struct {
 
 func (b *PlannerPromptBuilder) Build(
 	bugDescription string,
-	context string,
+	analysis string,
 ) string {
 
 	promptBuilder := strings.Builder{}
 	promptBuilder.WriteString("You are a senior software engineer analyzing a bug fix.\n\n")
 	promptBuilder.WriteString("Bug:\n" + bugDescription + "\n\n")
-	promptBuilder.WriteString("Analysis:\n" + context + "\n\n")
+	promptBuilder.WriteString("Analysis:\n" + analysis + "\n\n")
 	promptBuilder.WriteString("Based on the analysis, provide your response ONLY as a valid JSON object (no markdown, no extra text) with exactly this structure:\n")
 	promptBuilder.WriteString("{\n")
 	promptBuilder.WriteString("  \"affected_files\": [\"file1.go\", \"file2.go\"],\n")

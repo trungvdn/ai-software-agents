@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/ollama/ollama/api"
 )
@@ -131,8 +132,8 @@ func parseAnalysisResponse(response string) *AnalysisResponse {
 		SuggestedFix: "",
 	}
 
-	// Simple parsing - look for keywords
-	lines := fmt.Sprintf("%s\n", response)
+	// // Simple parsing - look for keywords
+	// lines := fmt.Sprintf("%s\n", response)
 
 	// Extract root cause section
 	if idx := findSection(response, "root cause"); idx >= 0 {

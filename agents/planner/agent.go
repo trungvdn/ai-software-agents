@@ -4,15 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
+	"log"
 
 	"github.com/trungvdn/ai-software-agents/domain/changeplan"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 )
 
 type LLMChangePlanner struct {
-	llm            llm.Client
-	contextBuilder prompt_context.Builder
+	llm llm.Client
 }
 
 // LLMResponse represents the structured response from the LLM
@@ -21,10 +20,9 @@ type LLMResponse struct {
 	Steps         []string `json:"steps"`
 }
 
-func NewLLMChangePlanner(llm llm.Client, contextBuilder prompt_context.Builder) *LLMChangePlanner {
+func NewLLMChangePlanner(llm llm.Client) *LLMChangePlanner {
 	return &LLMChangePlanner{
-		llm:            llm,
-		contextBuilder: contextBuilder,
+		llm: llm,
 	}
 }
 
@@ -56,11 +54,11 @@ func (p *LLMChangePlanner) Plan(
 	if len(llmResp.AffectedFiles) == 0 {
 		// warning log
 		log.Printf("Warning: LLM response contains no affected files. Response: %s", response)
-		return nil, nil
+		return &changeplan.ChangePlan{}, nil
 	}
 	if len(llmResp.Steps) == 0 {
 		log.Printf("Warning: LLM response contains no implementation steps. Response: %s", response)
-		return nil, nil
+		return &changeplan.ChangePlan{}, nil
 	}
 
 	plan := &changeplan.ChangePlan{
