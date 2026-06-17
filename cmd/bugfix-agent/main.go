@@ -54,7 +54,7 @@ func main() {
 
 	ollamaClient, err := llm.NewOllamaClient(llm.OllamaConfig{
 		Endpoint: cfg.OllamaBaseURL,
-		Model:    "mistral",
+		Model:    cfg.OllamaChatModel,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create Ollama client: %v", err)

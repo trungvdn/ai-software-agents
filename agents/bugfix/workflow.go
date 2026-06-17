@@ -37,34 +37,45 @@ func (a *BugFixAgent) FixBug(
 	ctx context.Context,
 	bugDescription string,
 ) (*Response, error) {
-	// Implementation for fixing the bug
-
+	// Retrieve relevant context
 	results, err := a.retriever.Retrieve(ctx, bugDescription, 10)
 	if err != nil {
 		log.Printf("Error retrieving context: %v", err)
 		return nil, err
 	}
 
+	// Re-rank results based on relevance to the bug description
 	resultsRerank, err := a.reRanker.ReRank(ctx, bugDescription, results)
 	if err != nil {
 		log.Printf("Error re-ranking results: %v", err)
 		return nil, err
 	}
 
+	// Build context for LLM
 	promptContext, err := a.contextBuilder.Build(ctx, resultsRerank)
 	if err != nil {
 		log.Printf("Error building context: %v", err)
 		return nil, err
 	}
 
+	// Build prompt for LLM
+	promptBuilder := &PromptBuilder{}
+	prompt := promptBuilder.Build(
+		bugDescription,
+		promptContext.Content,
+	)
+
+	// Get response from LLM
 	responseLLM, err := a.llm.Chat(
 		ctx,
-		promptContext.Content,
+		prompt,
 	)
 	if err != nil {
 		log.Printf("Error getting response from LLM: %v", err)
 		return nil, err
 	}
+
+	// Parse LLM response (for simplicity, we just return the raw response here)
 	response := &Response{
 		Analysis: responseLLM,
 	}

@@ -7,10 +7,11 @@ import (
 )
 
 type Config struct {
-	DatabaseURL   string
-	OpenAIAPIKey  string
-	OllamaBaseURL string
-	OllamaModel   string
+	DatabaseURL     string
+	OpenAIAPIKey    string
+	OllamaBaseURL   string
+	OllamaModel     string
+	OllamaChatModel string
 }
 
 func Load() Config {
@@ -21,10 +22,11 @@ func Load() Config {
 
 	// Fall back to environment variables
 	return Config{
-		DatabaseURL:   os.Getenv("DATABASE_URL"),
-		OpenAIAPIKey:  os.Getenv("OPENAI_API_KEY"),
-		OllamaBaseURL: os.Getenv("OLLAMA_BASE_URL"),
-		OllamaModel:   os.Getenv("OLLAMA_MODEL"),
+		DatabaseURL:     os.Getenv("DATABASE_URL"),
+		OpenAIAPIKey:    os.Getenv("OPENAI_API_KEY"),
+		OllamaBaseURL:   os.Getenv("OLLAMA_BASE_URL"),
+		OllamaModel:     os.Getenv("OLLAMA_MODEL"),
+		OllamaChatModel: os.Getenv("OLLAMA_CHAT_MODEL"),
 	}
 }
 
@@ -40,9 +42,10 @@ func loadFromSecretsFile(filePath string) (Config, error) {
 	}
 
 	return Config{
-		DatabaseURL:   secrets["database_url"],
-		OpenAIAPIKey:  secrets["openai_api_key"],
-		OllamaBaseURL: secrets["ollama_base_url"],
-		OllamaModel:   secrets["ollama_model"],
+		DatabaseURL:     secrets["database_url"],
+		OpenAIAPIKey:    secrets["openai_api_key"],
+		OllamaBaseURL:   secrets["ollama_base_url"],
+		OllamaModel:     secrets["ollama_model"],
+		OllamaChatModel: secrets["ollama_chat_model"],
 	}, nil
 }

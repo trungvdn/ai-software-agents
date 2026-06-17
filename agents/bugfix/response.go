@@ -1,7 +1,9 @@
 package bugfix
 
 type Response struct {
-	Analysis string
+	Analysis     string
+	RootCause    string
+	SuggestedFix string
 }
 
 func (r *Response) String(rootCause string, SuggestedFix string) string {
