@@ -1,7 +1,7 @@
 package bugfix
 
 import (
-	"github.com/trungvdn/ai-software-agents/planner/plan"
+	"github.com/trungvdn/ai-software-agents/agents/planner"
 	prompt_context "github.com/trungvdn/ai-software-agents/shared/context"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/retrieval"
@@ -14,7 +14,7 @@ type BugFixAgent struct {
 
 	contextBuilder prompt_context.Builder
 
-	planner plan.Planner
+	planner planner.Planner
 
 	llm llm.Client
 }
@@ -24,7 +24,7 @@ func NewBugFixAgent(
 	reRanker retrieval.ReRanker,
 	contextBuilder prompt_context.Builder,
 	llm llm.Client,
-	planner plan.Planner,
+	planner planner.Planner,
 ) BugFixAgent {
 	return BugFixAgent{
 		retriever:      retriever,

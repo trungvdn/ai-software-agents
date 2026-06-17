@@ -11,7 +11,8 @@ import (
 )
 
 type LLMChangePlanner struct {
-	llm llm.Client
+	llm            llm.Client
+	contextBuilder prompt_context.Builder
 }
 
 // LLMResponse represents the structured response from the LLM
@@ -20,9 +21,10 @@ type LLMResponse struct {
 	Steps         []string `json:"steps"`
 }
 
-func NewLLMChangePlanner(llm llm.Client) *LLMChangePlanner {
+func NewLLMChangePlanner(llm llm.Client, contextBuilder prompt_context.Builder) *LLMChangePlanner {
 	return &LLMChangePlanner{
-		llm: llm,
+		llm:            llm,
+		contextBuilder: contextBuilder,
 	}
 }
 
@@ -31,23 +33,13 @@ func (p *LLMChangePlanner) Plan(
 	bugDescription string,
 	analysis string,
 ) (*changeplan.ChangePlan, error) {
-	// Build a structured prompt that guides the LLM to output valid JSON
-	promptBuilder := strings.Builder{}
-	promptBuilder.WriteString("You are a senior software engineer analyzing a bug fix.\n\n")
-	promptBuilder.WriteString("Bug:\n" + bugDescription + "\n\n")
-	promptBuilder.WriteString("Analysis:\n" + analysis + "\n\n")
-	promptBuilder.WriteString("Based on the analysis, provide your response ONLY as a valid JSON object (no markdown, no extra text) with exactly this structure:\n")
-	promptBuilder.WriteString("{\n")
-	promptBuilder.WriteString("  \"affected_files\": [\"file1.go\", \"file2.go\"],\n")
-	promptBuilder.WriteString("  \"steps\": [\"step 1\", \"step 2\", \"step 3\"]\n")
-	promptBuilder.WriteString("}\n\n")
-	promptBuilder.WriteString("Where:\n")
-	promptBuilder.WriteString("- affected_files: List of Go source files that need to be modified\n")
-	promptBuilder.WriteString("- steps: List of concrete implementation steps to fix the bug\n")
-	promptBuilder.WriteString("- Ensure all strings are properly escaped\n")
-	promptBuilder.WriteString("- Return ONLY valid JSON, no other text\n")
 
-	prompt := promptBuilder.String()
+	// Build a structured prompt that guides the LLM to output valid JSON
+	promptBuilder := &PlannerPromptBuilder{}
+	prompt := promptBuilder.Build(
+		bugDescription,
+		analysis,
+	)
 
 	response, err := p.llm.Chat(ctx, prompt)
 	if err != nil {
@@ -62,10 +54,13 @@ func (p *LLMChangePlanner) Plan(
 
 	// Validate the response contains required fields
 	if len(llmResp.AffectedFiles) == 0 {
-		return nil, fmt.Errorf("LLM response contains no affected files")
+		// warning log
+		log.Printf("Warning: LLM response contains no affected files. Response: %s", response)
+		return nil, nil
 	}
 	if len(llmResp.Steps) == 0 {
-		return nil, fmt.Errorf("LLM response contains no implementation steps")
+		log.Printf("Warning: LLM response contains no implementation steps. Response: %s", response)
+		return nil, nil
 	}
 
 	plan := &changeplan.ChangePlan{

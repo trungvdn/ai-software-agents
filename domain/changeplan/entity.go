@@ -1,4 +1,4 @@
-package change_plan
+package changeplan
 
 type ChangePlan struct {
 	AffectedFiles []string
