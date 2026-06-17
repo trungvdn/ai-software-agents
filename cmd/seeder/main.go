@@ -11,6 +11,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
+	ai_context "github.com/trungvdn/ai-software-agents/shared/context"
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
 	"github.com/trungvdn/ai-software-agents/shared/retrieval"
 	"github.com/trungvdn/ai-software-agents/storage/repositories"
@@ -107,9 +108,9 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 	// Test with multiple search queries
 	testQueries := []string{
 		"Fix nil pointer in UserService",
-		"validate objects",
-		"database transaction",
-		"handle rollback",
+		// "validate objects",
+		// "database transaction",
+		// "handle rollback",
 	}
 
 	for _, query := range testQueries {
@@ -140,6 +141,15 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 		}
 
 		// Inject LLM Context (for demonstration, we just print the retrieved reflections)
+
+		// Context builder
+		contextBuilder := ai_context.NewReflectionContextBuilder()
+		ctxData, _ := contextBuilder.Build(
+			ctx,
+			results,
+		)
+
+		log.Println(ctxData.Content)
 
 		// Increase usage count for the retrieved reflections
 		var reflectionIDs []string
