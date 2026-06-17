@@ -59,7 +59,7 @@ func (r *ReflectionRepository) SearchSimilar(
 	query := `
 		SELECT id, content, 1 - (embedding <=> $1::vector) as similarity, usage_count, importance_score
 		FROM reflections
-		ORDER BY (embedding <-> $1::vector) ASC
+		ORDER BY (embedding <=> $1::vector) ASC
 		LIMIT $2
 	`
 

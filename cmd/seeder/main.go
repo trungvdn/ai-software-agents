@@ -146,7 +146,7 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 		for _, refl := range results {
 			reflectionIDs = append(reflectionIDs, refl.ID)
 		}
-		retriever.repo.IncrementUsageCount(ctx, reflectionIDs)
 
+		repo.IncrementUsageCount(ctx, reflectionIDs)
 	}
 }
