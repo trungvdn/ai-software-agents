@@ -7,76 +7,536 @@ This project is designed to learn and master AI Agents by building a multi-agent
 
 **Future Application**: The learnings will be applied to build **InvestPilot**, an intelligent information investment system powered by coordinated AI agents to analyze market data, generate insights, and recommend investment strategies.
 
-## Project Phases
+# Final Vision
 
-- **Phase 1**: Build BugFix Agent (using Memory, RAG, Context Builder, Embedding)
-- **Phase 2**: Build Coder Agent, Reviewer Agent, Tester Agent, Planner Agent
-- **Phase 3**: Build BA Agent, Merge Agent, Judge Agent, DevOps Agent
-- **Phase 4**: Collaborate all agents in coordinated workflow
-- **Phase 5**: Distributed system architecture
+```
+User:
+"I want to build a CRM for a clinic"
 
+            ↓
 
-## Current Progress: Phase 1 Development
+BA Agent
+    analyze requirements
 
-### Sprint 1
+            ↓
 
-Implemented:
-- ReadFileTool ✅
-- SearchCodeTool ✅
-- BugFix Agent skeleton ✅
+Planner Agent
+    divide tasks
 
-### Sprint 2
+            ↓
 
-- PostgreSQL + pgvector ✅
-- Reflection Store ✅
-- Historical Bug Store 
+Scheduler Agent
+    distribute tasks
 
-### Sprint 3
+            ↓
 
-- Docker + pgvector            ✅
-- Embedding Provider           ✅
-- Reflection Repository        ✅
-- Semantic Search              ✅
-- SearchResult                 ✅
-- Typed Metadata               ✅
-- Reflection Retriever         ✅
-- Simple ReRanker              ✅
-- Usage Tracking               ✅
-- Cosine Similarity Search     ✅
-- Context Builder
+Coder Agents (N)
+    implement
 
-### Sprint 4
+            ↓
 
-- BugFix Agent v1
+Tester Agents (N)
+    test
 
-### Sprint 5
+            ↓
 
-- Historical Bug Domain
+Reviewer Agents (N)
+    review
 
-### Sprint 6
+            ↓
 
-- Multi Retrieval
+Judge Agent
+    resolve conflict
 
-### Sprint 7
+            ↓
 
-- Memory Lifecycle
+DevOps Agent
+    deploy
 
-### Sprint 8
+            ↓
 
-- Coding Standard Domain
+Running Software
+```
 
-### Sprint 9
+---
 
-- Judge Agent
+# PHASE 1 — Foundation
 
-### Sprint 10
+Objective:
 
-- Code Retrieval
+```
+Agent learns from experience
+```
 
-### Sprint 11
+---
 
-- Planner Agent
+## Sprint 1
 
-### Sprint 12
+Basic Tool
 
-- AI Software Company v1
+```
+ReadFileTool ✅
+SearchCodeTool ✅
+BugFix Agent skeleton ✅
+```
+
+---
+
+## Sprint 2
+
+Store data
+
+```
+PostgreSQL + pgvector ✅
+Reflection Store ✅
+Historical Bug Store
+```
+
+---
+
+## Sprint 3
+
+Docker + pgvector ✅
+Embedding Provider ✅
+Reflection Repository ✅
+Semantic Search ✅
+SearchResult ✅
+Typed Metadata ✅
+Reflection Retriever ✅
+Simple ReRanker ✅
+Usage Tracking ✅
+Cosine Similarity Search ✅
+Context Builder
+
+---
+
+Deliverable
+
+```
+Reflection Memory System
+```
+
+---
+
+# PHASE 2 — Single Agent
+
+Objective:
+
+```
+A complete Agent
+```
+
+---
+
+## Sprint 4
+
+BugFix Agent v1 
+
+```
+Bug 
+↓
+Reflection 
+↓
+LLM 
+↓
+Suggestion 
+```
+
+---
+
+## Sprint 5
+
+Historical Bug Domain 
+
+```
+Case Study Memory 
+```
+
+---
+
+## Sprint 6
+
+Multi Retrieval
+
+```
+Reflection 
+HistoricalBug 
+```
+
+↓
+
+```
+Merge 
+ReRank 
+```
+
+---
+
+Deliverable
+
+```
+Bug Fix Agent
+```
+
+---
+
+# PHASE 3 — Learning System
+
+Objective:
+
+```
+Agent learns
+```
+
+---
+
+## Sprint 7
+
+Memory Lifecycle 
+
+```
+Episode 
+↓
+Reflection
+↓
+Coding Standard
+```
+
+---
+
+## Sprint 8
+
+Coding Standard Domain
+
+```
+Rules
+Policies
+Best Practices
+```
+
+---
+
+## Sprint 9
+
+Memory Promotion Pipeline
+
+```
+Promote
+Decay
+Prune
+```
+
+---
+
+Deliverable
+
+```
+Self-Learning Agent
+```
+
+---
+
+# PHASE 4 — Engineering Agent
+
+Objective:
+
+```
+Agent truly codes
+```
+
+---
+
+## Sprint 10
+
+Code Retrieval
+
+```
+Repository
+Service
+Controller
+```
+
+---
+
+## Sprint 11
+
+Architecture Decision Domain
+
+```
+ADR
+Design Decision
+```
+
+---
+
+## Sprint 12
+
+Code Change Planner
+
+```
+Bug
+↓
+Impact Analysis
+↓
+Files To Change
+```
+
+---
+
+Deliverable
+
+```
+Software Engineer Agent
+```
+
+---
+
+# PHASE 5 — Team Simulation
+
+Objective:
+
+```
+Multiple Agents working together
+```
+
+---
+
+## Sprint 13
+
+Planner Agent
+
+```
+Requirement
+↓
+Tasks
+```
+
+---
+
+## Sprint 14
+
+Coder Agent
+
+```
+Task
+↓
+Code
+```
+
+---
+
+## Sprint 15
+
+Tester Agent
+
+```
+Task
+↓
+Test Cases
+```
+
+---
+
+## Sprint 16
+
+Reviewer Agent
+
+```
+Code Review
+```
+
+---
+
+## Sprint 17
+
+Judge Agent
+
+```
+Conflict Resolution
+
+Coder
+Tester
+Reviewer
+```
+
+---
+
+Deliverable
+
+```
+AI Scrum Team
+```
+
+---
+
+# PHASE 6 — Workflow Engine
+
+Objective:
+
+```
+Agent Orchestration
+```
+
+---
+
+## Sprint 18
+
+Task Graph
+
+```
+DAG
+Dependencies
+```
+
+---
+
+## Sprint 19
+
+Scheduler Agent
+
+```
+Assign Tasks
+```
+
+---
+
+## Sprint 20
+
+Workflow State Machine
+
+```
+Todo
+Doing
+Review
+Done
+```
+
+---
+
+Deliverable
+
+```
+Agent Orchestration Platform
+```
+
+---
+
+# PHASE 7 — AI Software Company
+
+Objective:
+
+```
+Build software from Requirements
+```
+
+---
+
+## Sprint 21
+
+BA Agent
+
+```
+User Idea
+↓
+Requirements
+```
+
+---
+
+## Sprint 22
+
+Project Manager Agent
+
+```
+Roadmap
+Milestones
+```
+
+---
+
+## Sprint 23
+
+Multi-Agent Collaboration
+
+```
+BA
+Planner
+Scheduler
+Coder
+Tester
+Reviewer
+Judge
+```
+
+---
+
+Deliverable
+
+```
+AI Software Company v1
+```
+
+---
+
+# PHASE 8 — Production Scale
+
+Objective:
+
+```
+Scale multiple projects
+```
+
+---
+
+## Sprint 24
+
+Shared Memory
+
+```
+Cross Project Learning
+```
+
+---
+
+## Sprint 25
+
+Knowledge Graph
+
+```
+Architecture
+Code
+Bug
+Decision
+```
+
+---
+
+## Sprint 26
+
+Hybrid Search
+
+```
+BM25
+Vector
+Graph
+```
+
+---
+
+## Sprint 27
+
+Cross Encoder ReRanker
+
+---
+
+## Sprint 28
+
+Human In The Loop
+
+---
+
+Deliverable
+
+```
+AI Software Company v2
+```
