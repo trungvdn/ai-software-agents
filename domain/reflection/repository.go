@@ -13,4 +13,9 @@ type ReflectionRepository interface {
 		embedding []float32,
 		limit int,
 	) ([]SimilarReflection, error)
+
+	IncrementUsageCount(
+		ctx context.Context,
+		id string,
+	) error
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
 	"github.com/trungvdn/ai-software-agents/storage/repositories"
 )
 
@@ -95,10 +96,13 @@ func embedAndSaveReflection(ctx context.Context, repo reflection.ReflectionRepos
 }
 
 func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepository, embedder embedding.Embedder) {
+
 	retriever := &reflection.ReflectionRetriever{
 		ReflectionRepository: repo,
 		Embedder:             embedder,
 	}
+
+	reRanker := &retrieval.SimpleReRanker{}
 
 	// Test with multiple search queries
 	testQueries := []string{
@@ -110,16 +114,31 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 
 	for _, query := range testQueries {
 		log.Printf("\nSearching for: '%s'", query)
-		reflections, err := retriever.RetrieveSimilar(ctx, query, 3)
+		results, err := retriever.RetrieveSimilar(ctx, query, 3)
 		if err != nil {
 			log.Fatalf("Failed to retrieve similar reflections: %v", err)
 		}
-
-		if len(reflections) == 0 {
+		// Rerank results based on similarity score
+		if len(results) == 0 {
 			log.Printf("  No results found")
 		} else {
-			for i, refl := range reflections {
-				log.Printf("  [%d] %s", i+1, refl.Content)
+			reRanker.ReRank(ctx, query, results)
+			for i, refl := range results {
+				log.Printf(
+					"[%d] score=%.4f source=%s content=%s",
+					i+1,
+					refl.Score,
+					refl.Source,
+					refl.Content,
+				)
+				retriever.ReflectionRepository.IncrementUsageCount(ctx, refl.ID)
+				log.Printf("  Updated usage count for reflection ID: %s", refl.ID)
+				log.Printf("  Metadata: importanceScore=%s, usageCount=%s",
+					refl.Metadata["importanceScore"],
+					refl.Metadata["usageCount"],
+				)
+				log.Printf("  ---")
+				// Optionally, you can also update the importance score based on some logic here
 			}
 		}
 	}

@@ -2,9 +2,10 @@ package reflection
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
-	"github.com/trungvdn/ai-software-agents/shared/rag"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
 )
 
 type ReflectionRetriever struct {
@@ -26,7 +27,7 @@ func (r *ReflectionRetriever) RetrieveSimilar(
 	ctx context.Context,
 	text string,
 	limit int,
-) ([]rag.SearchResult, error) {
+) ([]retrieval.SearchResult, error) {
 	embedding, err := r.Embedder.Embed(ctx, text)
 	if err != nil {
 		return nil, err
@@ -37,13 +38,17 @@ func (r *ReflectionRetriever) RetrieveSimilar(
 		return nil, err
 	}
 
-	var results []rag.SearchResult
+	var results []retrieval.SearchResult
 	for _, ref := range reflections {
-		results = append(results, rag.SearchResult{
+		results = append(results, retrieval.SearchResult{
 			ID:      ref.Reflection.ID.String(),
 			Content: ref.Reflection.Content,
 			Score:   ref.Similarity,
 			Source:  "reflection",
+			Metadata: map[string]string{
+				"importanceScore": fmt.Sprint(ref.Reflection.ImportanceScore),
+				"usageCount":      fmt.Sprint(ref.Reflection.UsageCount),
+			},
 		})
 	}
 

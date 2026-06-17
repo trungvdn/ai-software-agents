@@ -1,13 +1,6 @@
-package rag
+package retrieval
 
 import "context"
-
-type SearchResult struct {
-	ID      string
-	Content string
-	Score   float64
-	Source  string
-}
 
 type Retriever interface {
 	Retrieve(
