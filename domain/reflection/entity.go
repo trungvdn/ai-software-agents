@@ -15,3 +15,8 @@ type Reflection struct {
 	CreatedAt       time.Time
 	Embedding       []float32
 }
+
+type SimilarReflection struct {
+	Reflection Reflection
+	Similarity float64
+}

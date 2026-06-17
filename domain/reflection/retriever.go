@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
+	"github.com/trungvdn/ai-software-agents/shared/rag"
 )
 
 type ReflectionRetriever struct {
@@ -25,11 +26,26 @@ func (r *ReflectionRetriever) RetrieveSimilar(
 	ctx context.Context,
 	text string,
 	limit int,
-) ([]Reflection, error) {
+) ([]rag.SearchResult, error) {
 	embedding, err := r.Embedder.Embed(ctx, text)
 	if err != nil {
 		return nil, err
 	}
 
-	return r.ReflectionRepository.SearchSimilar(ctx, embedding, limit)
+	reflections, err := r.ReflectionRepository.SearchSimilar(ctx, embedding, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []rag.SearchResult
+	for _, ref := range reflections {
+		results = append(results, rag.SearchResult{
+			ID:      ref.Reflection.ID.String(),
+			Content: ref.Reflection.Content,
+			Score:   ref.Similarity,
+			Source:  "reflection",
+		})
+	}
+
+	return results, nil
 }

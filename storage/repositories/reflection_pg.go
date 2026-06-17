@@ -55,9 +55,9 @@ func (r *ReflectionRepository) SearchSimilar(
 	ctx context.Context,
 	embedding []float32,
 	limit int,
-) ([]reflection.Reflection, error) {
+) ([]reflection.SimilarReflection, error) {
 	query := `
-		SELECT id, content, importance_score
+		SELECT id, content, 1 - (embedding <=> $1) as similarity
 		FROM reflections
 		ORDER BY (embedding <-> $1::vector) ASC
 		LIMIT $2
@@ -72,10 +72,10 @@ func (r *ReflectionRepository) SearchSimilar(
 	}
 	defer rows.Close()
 
-	var results []reflection.Reflection
+	var results []reflection.SimilarReflection
 	for rows.Next() {
-		var refl reflection.Reflection
-		if err := rows.Scan(&refl.ID, &refl.Content, &refl.ImportanceScore); err != nil {
+		var refl reflection.SimilarReflection
+		if err := rows.Scan(&refl.Reflection.ID, &refl.Reflection.Content, &refl.Similarity); err != nil {
 			return nil, err
 		}
 		results = append(results, refl)

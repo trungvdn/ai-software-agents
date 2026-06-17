@@ -12,5 +12,5 @@ type ReflectionRepository interface {
 		ctx context.Context,
 		embedding []float32,
 		limit int,
-	) ([]Reflection, error)
+	) ([]SimilarReflection, error)
 }
