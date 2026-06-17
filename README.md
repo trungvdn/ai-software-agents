@@ -96,8 +96,6 @@ Historical Bug Store
 
 ## Sprint 3
 
-Docker + pgvector ✅
-
 ```
 Docker + pgvector ✅
 Embedding Provider ✅
@@ -143,7 +141,7 @@ Reflection
 ↓
 LLM 
 ↓
-Suggestion 
+Suggestion
 ```
 
 ---
@@ -153,25 +151,33 @@ Suggestion
 Historical Bug Domain 
 
 ```
-Case Study Memory 
+Case Study Memory
 ```
 
 ---
 
 ## Sprint 6
 
-Multi Retrieval
+Code Change Planner
 
 ```
-Reflection 
-HistoricalBug 
-```
-
+Bug
 ↓
+Affected Files
+↓
+Change Plan
+```
+
+---
+
+## Sprint 7
+
+Coder Agent v1
 
 ```
-Merge 
-ReRank 
+Task
+↓
+Code Suggestion
 ```
 
 ---
@@ -179,7 +185,94 @@ ReRank
 Deliverable
 
 ```
-Bug Fix Agent
+Junior Coder Agent
+```
+
+---
+
+# Phase 3 — Memory Lifecycle
+
+Learning how memory lifecycle works.
+
+---
+
+# Phase 4 — Advanced Coder Agent
+
+Coder Agent v2
+
+Adds:
+
+```
+Code Retrieval
+Historical Bug
+Coding Standard
+Architecture Decision
+```
+
+---
+
+Pipeline:
+
+```
+Task
+↓
+Retrieve Knowledge
+↓
+Generate Code
+↓
+Generate Unit Test
+```
+
+---
+
+Deliverable
+
+```
+Middle Coder Agent
+```
+
+---
+
+# Phase 5 — Senior Coder Agent
+
+Coder Agent v3
+
+Adds:
+
+```
+Multi File Change
+Dependency Analysis
+Refactoring
+```
+
+---
+
+Example:
+
+```
+Add RBAC
+```
+
+---
+
+Agent knows:
+
+```
+User Service
+Role Service
+Middleware
+Database Migration
+Tests
+```
+
+All need to be modified.
+
+---
+
+Deliverable
+
+```
+Senior Coder Agent
 ```
 
 ---
@@ -190,16 +283,15 @@ Objective:
 
 ```
 Agent learns
-```
 
 ---
 
-## Sprint 7
+## Sprint 8
 
-Memory Lifecycle 
+Memory Lifecycle
 
 ```
-Episode 
+Episode
 ↓
 Reflection
 ↓
@@ -208,7 +300,7 @@ Coding Standard
 
 ---
 
-## Sprint 8
+## Sprint 9
 
 Coding Standard Domain
 
@@ -220,7 +312,7 @@ Best Practices
 
 ---
 
-## Sprint 9
+## Sprint 10
 
 Memory Promotion Pipeline
 
@@ -246,11 +338,10 @@ Objective:
 
 ```
 Agent truly codes
-```
 
 ---
 
-## Sprint 10
+## Sprint 11
 
 Code Retrieval
 
@@ -262,7 +353,7 @@ Controller
 
 ---
 
-## Sprint 11
+## Sprint 12
 
 Architecture Decision Domain
 
@@ -273,7 +364,7 @@ Design Decision
 
 ---
 
-## Sprint 12
+## Sprint 13
 
 Code Change Planner
 
@@ -301,11 +392,10 @@ Objective:
 
 ```
 Multiple Agents working together
-```
 
 ---
 
-## Sprint 13
+## Sprint 14
 
 Planner Agent
 
@@ -317,7 +407,7 @@ Tasks
 
 ---
 
-## Sprint 14
+## Sprint 15
 
 Coder Agent
 
@@ -329,7 +419,7 @@ Code
 
 ---
 
-## Sprint 15
+## Sprint 16
 
 Tester Agent
 
@@ -341,7 +431,7 @@ Test Cases
 
 ---
 
-## Sprint 16
+## Sprint 17
 
 Reviewer Agent
 
@@ -351,7 +441,7 @@ Code Review
 
 ---
 
-## Sprint 17
+## Sprint 18
 
 Judge Agent
 
@@ -379,11 +469,10 @@ Objective:
 
 ```
 Agent Orchestration
-```
 
 ---
 
-## Sprint 18
+## Sprint 19
 
 Task Graph
 
@@ -394,7 +483,7 @@ Dependencies
 
 ---
 
-## Sprint 19
+## Sprint 20
 
 Scheduler Agent
 
@@ -404,7 +493,7 @@ Assign Tasks
 
 ---
 
-## Sprint 20
+## Sprint 21
 
 Workflow State Machine
 
@@ -431,11 +520,10 @@ Objective:
 
 ```
 Build software from Requirements
-```
 
 ---
 
-## Sprint 21
+## Sprint 22
 
 BA Agent
 
@@ -447,7 +535,7 @@ Requirements
 
 ---
 
-## Sprint 22
+## Sprint 23
 
 Project Manager Agent
 
@@ -458,7 +546,7 @@ Milestones
 
 ---
 
-## Sprint 23
+## Sprint 24
 
 Multi-Agent Collaboration
 
@@ -488,11 +576,10 @@ Objective:
 
 ```
 Scale multiple projects
-```
 
 ---
 
-## Sprint 24
+## Sprint 25
 
 Shared Memory
 
@@ -502,7 +589,7 @@ Cross Project Learning
 
 ---
 
-## Sprint 25
+## Sprint 26
 
 Knowledge Graph
 
@@ -515,7 +602,7 @@ Decision
 
 ---
 
-## Sprint 26
+## Sprint 27
 
 Hybrid Search
 
@@ -525,19 +612,19 @@ Vector
 Graph
 ```
 
----
+
 
 ## Sprint 27
 
 Cross Encoder ReRanker
 
----
+
 
 ## Sprint 28
 
 Human In The Loop
 
----
+
 
 Deliverable
 
