@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
@@ -42,7 +44,7 @@ func main() {
 	defer db.Close()
 
 	// Create repository
-	reflectionRepo := repositories.NewReflectionRepository(db)
+	// reflectionRepo := repositories.NewReflectionRepository(db)
 
 	// Create embedder
 	embedder := embedding.NewOllamaEmbedder(cfg.OllamaBaseURL, cfg.OllamaModel)
@@ -51,7 +53,11 @@ func main() {
 	}
 
 	// embedAndSaveReflection(context.Background(), reflectionRepo, embedder)
-	retrieveReflection(context.Background(), reflectionRepo, embedder)
+	// retrieveReflection(context.Background(), reflectionRepo, embedder)
+
+	// embedAndSaveHistoricalBug(context.Background(), repositories.NewHistoricalBugRepository(db), embedder)
+
+	retrieveHistoricalBug(context.Background(), repositories.NewHistoricalBugRepository(db), embedder)
 
 }
 
@@ -158,5 +164,77 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 		}
 
 		repo.IncrementUsageCount(ctx, reflectionIDs)
+	}
+}
+
+func embedAndSaveHistoricalBug(ctx context.Context, repo historicalbug.HistoricalBugRepository, embedder embedding.Embedder) {
+	// Example historical bug data
+	bugs := []*historicalbug.HistoricalBug{
+		{
+			ID:         uuid.New(),
+			Title:      "Null Pointer Exception in UserService",
+			RootCause:  "User object was not properly initialized before accessing its methods.",
+			FixSummary: "Added null checks and proper initialization for User object in UserService.",
+			Severity:   "High",
+			UsageCount: 0,
+			CreatedAt:  time.Now(),
+		},
+		{
+			ID:         uuid.New(),
+			Title:      "Database transaction not rolled back",
+			RootCause:  "In case of an error during the transaction, the rollback was not triggered.",
+			FixSummary: "Added error handling to ensure that transactions are rolled back on failure.",
+			Severity:   "Medium",
+			UsageCount: 0,
+			CreatedAt:  time.Now(),
+		},
+		{
+			ID:         uuid.New(),
+			Title:      "Panic due to nil context",
+			RootCause:  "A function expected a non-nil context but received nil, leading to a panic when trying to access context values.",
+			FixSummary: "Added checks to ensure that context is not nil before accessing its values.",
+			Severity:   "Critical",
+			UsageCount: 0,
+			CreatedAt:  time.Now(),
+		},
+	}
+
+	for _, bug := range bugs {
+		embeddingVector, err := embedder.Embed(ctx, bug.RootCause+" "+bug.FixSummary)
+		if err != nil {
+			log.Fatalf("Failed to generate embedding: %v", err)
+		}
+		bug.Embedding = embeddingVector
+	}
+
+	// Save the historical bug with embedding
+	if err := repo.Save(ctx, bugs); err != nil {
+		log.Fatalf("Failed to save historical bugs: %v", err)
+	}
+	log.Printf("Successfully inserted %d historical bugs", len(bugs))
+}
+
+func retrieveHistoricalBug(ctx context.Context, repo historicalbug.HistoricalBugRepository, embedder embedding.Embedder) {
+	// Example query to search for similar historical bugs
+	query := "How to fix null pointer exception in user service?"
+	embeddingVector, err := embedder.Embed(ctx, query)
+	if err != nil {
+		log.Fatalf("Failed to generate embedding for query: %v", err)
+	}
+	fmt.Printf("Embedding vector for query: %v\n", embeddingVector)
+	bugs, err := repo.SearchSimilar(ctx, embeddingVector, 3)
+	if err != nil {
+		log.Fatalf("Failed to search for similar historical bugs: %v", err)
+	}
+	log.Printf("Search results for query: '%s'", query)
+	for i, bug := range bugs {
+		log.Printf(
+			"[%d] Title: %s, Severity: %s, Root Cause: %s, Fix Summary: %s",
+			i+1,
+			bug.Title,
+			bug.Severity,
+			bug.RootCause,
+			bug.FixSummary,
+		)
 	}
 }
