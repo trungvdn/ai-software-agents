@@ -17,3 +17,34 @@ func NewHistoricalBugRetriever(
 		embedder: embedder,
 	}
 }
+
+func (r *HistoricalBugRetriever) Retrieve(
+	ctx context.Context,
+	query string,
+	topK int,
+) ([]retrieval.SearchResult, error) {
+	embedding, err := r.embedder.Embed(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	bugs, err := r.repo.SearchSimilar(ctx, embedding, topK)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []retrieval.SearchResult
+	for _, bug := range bugs {
+		results = append(results, retrieval.SearchResult{
+			ID:      bug.ID.String(),
+			Content: bug.Title,
+			Score:   bug.Similarity,
+			Source:  "historical_bug",
+			Metadata: retrieval.SearchMetadata{
+				ImportanceScore: bug.ImportanceScore,
+				UsageCount:      bug.UsageCount,
+			},
+		})
+	}
+	return results, nil
+}

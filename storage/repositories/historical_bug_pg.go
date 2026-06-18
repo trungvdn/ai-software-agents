@@ -38,13 +38,25 @@ func (r *HistoricalBugRepository) Save(
 
 	// Convert embedding to pgvector format
 
+	// Use tx.BeginTx(...)
+
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
 	for _, b := range bug {
 		embeddingStr := utils.VectorToString(b.Embedding)
 
-		_, err := r.db.ExecContext(ctx, query, b.ID, b.Title, b.RootCause, b.FixSummary, b.Severity, b.UsageCount, embeddingStr, b.CreatedAt)
+		_, err := tx.ExecContext(ctx, query, b.ID, b.Title, b.RootCause, b.FixSummary, b.Severity, b.UsageCount, embeddingStr, b.CreatedAt)
 		if err != nil {
 			return err
 		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -77,4 +89,17 @@ func (r *HistoricalBugRepository) SearchSimilar(
 		bugs = append(bugs, bug)
 	}
 	return bugs, nil
+}
+
+func (r *HistoricalBugRepository) IncrementUsageCount(
+	ctx context.Context,
+	id []string,
+) error {
+	query := `
+		UPDATE historical_bugs
+		SET usage_count = usage_count + 1, last_accessed = NOW()
+		WHERE id = ANY($1)
+	`
+	_, err := r.db.ExecContext(ctx, query, id)
+	return err
 }

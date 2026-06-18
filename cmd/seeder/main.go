@@ -200,7 +200,13 @@ func embedAndSaveHistoricalBug(ctx context.Context, repo historicalbug.Historica
 	}
 
 	for _, bug := range bugs {
-		embeddingVector, err := embedder.Embed(ctx, bug.RootCause+" "+bug.FixSummary)
+		content := fmt.Sprintf(
+			"%s\n%s\n%s",
+			bug.Title,
+			bug.RootCause,
+			bug.FixSummary,
+		)
+		embeddingVector, err := embedder.Embed(ctx, content)
 		if err != nil {
 			log.Fatalf("Failed to generate embedding: %v", err)
 		}
