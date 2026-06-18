@@ -1,6 +1,12 @@
 package historicalbug
 
-import "github.com/trungvdn/ai-software-agents/shared/embedding"
+import (
+	"context"
+	"fmt"
+
+	"github.com/trungvdn/ai-software-agents/shared/embedding"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
+)
 
 type HistoricalBugRetriever struct {
 	repo HistoricalBugRepository
@@ -36,9 +42,10 @@ func (r *HistoricalBugRetriever) Retrieve(
 	var results []retrieval.SearchResult
 	for _, bug := range bugs {
 		results = append(results, retrieval.SearchResult{
-			ID:      bug.ID.String(),
-			Content: bug.Title,
-			Source:  "historical_bug",
+			ID: bug.ID.String(),
+			Content: fmt.Sprintf(
+				"Title: %s\nRootCause: %s\nFix: %s", bug.Title, bug.RootCause, bug.FixSummary),
+			Source: "historical_bug",
 		})
 	}
 	return results, nil

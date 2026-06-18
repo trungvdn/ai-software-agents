@@ -65,6 +65,8 @@ func (a *BugFixAgent) FixBug(
 		promptContext.Content,
 	)
 
+	fmt.Println("Prompt for LLM:", prompt)
+
 	// Get response from LLM
 	responseLLM, err := a.llm.Chat(
 		ctx,

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/ollama/ollama/api"
 )
@@ -38,8 +39,10 @@ func NewOllamaClient(config OllamaConfig) (*OllamaClient, error) {
 		return nil, fmt.Errorf("invalid endpoint URL: %w", err)
 	}
 
-	// Create HTTP client
-	httpClient := &http.Client{}
+	// Create HTTP client with timeout
+	httpClient := &http.Client{
+		Timeout: 5 * time.Minute, // 5-minute timeout for LLM requests
+	}
 
 	// Create Ollama API client
 	client := api.NewClient(u, httpClient)
@@ -137,12 +140,12 @@ func parseAnalysisResponse(response string) *AnalysisResponse {
 
 	// Extract root cause section
 	if idx := findSection(response, "root cause"); idx >= 0 {
-		analysisResp.RootCause = extractSection(response, idx, "Suggested fix")
+		analysisResp.RootCause = extractSection(response, idx, "root cause", "Suggested fix")
 	}
 
 	// Extract suggested fix section
 	if idx := findSection(response, "suggested fix"); idx >= 0 {
-		analysisResp.SuggestedFix = extractSection(response, idx, "")
+		analysisResp.SuggestedFix = extractSection(response, idx, "suggested fix", "")
 	}
 
 	return analysisResp
@@ -152,7 +155,7 @@ func parseAnalysisResponse(response string) *AnalysisResponse {
 func findSection(text, keyword string) int {
 	keyword = strings.ToLower(keyword)
 	text = strings.ToLower(text)
-	for i := 0; i < len(text)-len(keyword); i++ {
+	for i := 0; i <= len(text)-len(keyword); i++ {
 		if text[i:i+len(keyword)] == keyword {
 			return i
 		}
@@ -161,12 +164,12 @@ func findSection(text, keyword string) int {
 }
 
 // extractSection extracts text between two keywords
-func extractSection(text string, startIdx int, endKeyword string) string {
+func extractSection(text string, startIdx int, startKeyword, endKeyword string) string {
 	if startIdx < 0 {
 		return ""
 	}
 
-	startIdx += len("suggested fix") + 1
+	startIdx += len(startKeyword) + 1
 
 	endIdx := len(text)
 	if endKeyword != "" {

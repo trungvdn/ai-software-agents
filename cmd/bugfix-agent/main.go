@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/trungvdn/ai-software-agents/agents/bugfix"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
@@ -70,6 +71,12 @@ func main() {
 		ollamaClient,
 		planner,
 	)
-	ctx := context.Background()
-	fixBugAgent.FixBug(ctx, "Fix nil pointer in UserService")
+	// Create context with timeout to prevent hanging
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+
+	_, err = fixBugAgent.FixBug(ctx, "Fix nil pointer in UserService")
+	if err != nil {
+		log.Fatalf("Error fixing bug: %v", err)
+	}
 }
