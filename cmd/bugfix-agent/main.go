@@ -42,17 +42,31 @@ func main() {
 	// Create repository
 	reflectionRepo := repositories.NewReflectionRepository(db)
 
+	historicalBugRepo := repositories.NewHistoricalBugRepository(db)
+
 	// Create embedder
 	embedder := embedding.NewOllamaEmbedder(cfg.OllamaBaseURL, cfg.OllamaModel)
 
-	retrieverAgent := reflection.NewReflectionRetriever(
+	// Reflection retrievers
+	reflectionRetriever := reflection.NewReflectionRetriever(
 		reflectionRepo,
 		embedder,
 	)
 
+	// Historical bug retrievers
+	historicalBugRetriever := retrieval.NewHistoricalBugRetriever(
+		historicalBugRepo,
+		embedder,
+	)
+
+	mergeRetriever := retrieval.NewMergeRetriever(
+		reflectionRetriever,
+		historicalBugRetriever,
+	)
+
 	reRanker := &retrieval.SimpleReRanker{}
 
-	contextBuilder := prompt_context.NewReflectionContextBuilder()
+	knowledgeContextBuilder := prompt_context.NewKnowledgeContextBuilder()
 
 	ollamaClient, err := llm.NewOllamaClient(llm.OllamaConfig{
 		Endpoint: cfg.OllamaBaseURL,
@@ -65,9 +79,9 @@ func main() {
 	planner := planner.NewLLMChangePlanner(ollamaClient)
 
 	fixBugAgent := bugfix.NewBugFixAgent(
-		retrieverAgent,
+		mergeRetriever,
 		reRanker,
-		contextBuilder,
+		knowledgeContextBuilder,
 		ollamaClient,
 		planner,
 	)
