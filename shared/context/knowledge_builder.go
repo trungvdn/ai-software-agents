@@ -35,16 +35,20 @@ func (b *KnowledgeContextBuilder) Build(
 	builder.WriteString("=== CONTEXT ===\n\n")
 	builder.WriteString("Relevant Knowledge:\n\n")
 	builder.WriteString("[Reflection]\n")
-	for i, res := range results {
-		if res.Source == "reflection" {
-			builder.WriteString(fmt.Sprintf("%d. %s\n\n", i+1, res.Content))
-		}
+
+	grouped := make(map[string][]retrieval.SearchResult)
+
+	for _, result := range results {
+		grouped[result.Source] = append(grouped[result.Source], result)
+	}
+
+	for reflectionIndex, res := range grouped["reflection"] {
+		builder.WriteString(fmt.Sprintf("%d. %s\n\n", reflectionIndex+1, res.Content))
 	}
 	builder.WriteString("[Historical Bug]\n")
-	for i, res := range results {
-		if res.Source == "historical_bug" {
-			builder.WriteString(fmt.Sprintf("%d. %s\n\n", i+1, res.Content))
-		}
+	for historicalBugIndex, res := range grouped["historical_bug"] {
+		builder.WriteString(fmt.Sprintf("%d. %s\n\n", historicalBugIndex+1, res.Content))
 	}
+
 	return PromptContext{Content: builder.String()}, nil
 }

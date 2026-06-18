@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/trungvdn/ai-software-agents/agents/bugfix"
+	"github.com/trungvdn/ai-software-agents/agents/planner"
+	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
@@ -13,8 +15,6 @@ import (
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/retrieval"
-
-	"github.com/trungvdn/ai-software-agents/agents/planner"
 	"github.com/trungvdn/ai-software-agents/storage/repositories"
 )
 
@@ -54,7 +54,7 @@ func main() {
 	)
 
 	// Historical bug retrievers
-	historicalBugRetriever := retrieval.NewHistoricalBugRetriever(
+	historicalBugRetriever := historicalbug.NewHistoricalBugRetriever(
 		historicalBugRepo,
 		embedder,
 	)

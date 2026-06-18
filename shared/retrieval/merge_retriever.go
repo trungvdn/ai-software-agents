@@ -1,5 +1,11 @@
 package retrieval
 
+import (
+	"context"
+	"log"
+	"strings"
+)
+
 type MergeRetriever struct {
 	retrievers []Retriever
 }
@@ -25,12 +31,35 @@ func (m *MergeRetriever) Retrieve(
 			query,
 			topK,
 		)
+
+		if err != nil {
+			log.Printf(
+				"[MergeRetriever] Error retrieving from retriever: %T, error: %v",
+				retriever,
+				err,
+			)
+			continue
+		}
+
 		log.Printf(
 			"[MergeRetriever] Retrieved %d docs from retriever: %T",
 			len(docs),
 			retriever,
 		)
-		results = append(results, docs...)
+
+		// Deduplicate
+		for _, doc := range docs {
+			exists := false
+			for _, existing := range results {
+				if strings.Contains(existing.Content, doc.Content) || strings.Contains(doc.Content, existing.Content) {
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				results = append(results, doc)
+			}
+		}
 	}
 	return results, nil
 }
