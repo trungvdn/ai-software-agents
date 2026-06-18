@@ -38,12 +38,7 @@ func (r *HistoricalBugRetriever) Retrieve(
 		results = append(results, retrieval.SearchResult{
 			ID:      bug.ID.String(),
 			Content: bug.Title,
-			Score:   bug.Similarity,
 			Source:  "historical_bug",
-			Metadata: retrieval.SearchMetadata{
-				ImportanceScore: bug.ImportanceScore,
-				UsageCount:      bug.UsageCount,
-			},
 		})
 	}
 	return results, nil

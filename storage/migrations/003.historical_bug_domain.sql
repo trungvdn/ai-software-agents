@@ -9,6 +9,5 @@ CREATE TABLE IF NOT EXISTS historical_bugs (
     created_at TIMESTAMP
 );
 
-//docker cp storage/migrations/001_init.sql ai_agents_db:/tmp/init.sq
-//docker exec -it ai_agents_db psql -U postgres -d ai_agents -f /tmp/003.sql
+
 

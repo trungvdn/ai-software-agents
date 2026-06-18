@@ -13,4 +13,9 @@ type HistoricalBugRepository interface {
 		embedding []float32,
 		limit int,
 	) ([]HistoricalBug, error)
+
+	IncrementUsageCount(
+		ctx context.Context,
+		id []string,
+	) error
 }
