@@ -6,9 +6,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
+
+	"github.com/trungvdn/ai-software-agents/domain/codebase"
 	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
@@ -57,7 +61,9 @@ func main() {
 
 	// embedAndSaveHistoricalBug(context.Background(), repositories.NewHistoricalBugRepository(db), embedder)
 
-	retrieveHistoricalBug(context.Background(), repositories.NewHistoricalBugRepository(db), embedder)
+	// retrieveHistoricalBug(context.Background(), repositories.NewHistoricalBugRepository(db), embedder)
+
+	indexFolder(context.Background(), "./testdata", repositories.NewCodeBaseRepository(db), embedder)
 
 }
 
@@ -149,7 +155,7 @@ func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepositor
 		// Inject LLM Context (for demonstration, we just print the retrieved reflections)
 
 		// Context builder
-		contextBuilder := ai_context.NewReflectionContextBuilder()
+		contextBuilder := ai_context.NewKnowledgeContextBuilder()
 		ctxData, _ := contextBuilder.Build(
 			ctx,
 			results,
@@ -243,4 +249,156 @@ func retrieveHistoricalBug(ctx context.Context, repo historicalbug.HistoricalBug
 			bug.FixSummary,
 		)
 	}
+}
+
+func indexFolder(ctx context.Context, rootPath string, repo codebase.CodeBaseRepository, embedder embedding.Embedder) {
+	// Define directories and file extensions to skip
+	skipDirs := map[string]bool{
+		".git":          true,
+		"node_modules":  true,
+		".venv":         true,
+		"venv":          true,
+		".env":          true,
+		"__pycache__":   true,
+		".pytest_cache": true,
+		"vendor":        true,
+		".idea":         true,
+		".vscode":       true,
+		"dist":          true,
+		"build":         true,
+		"target":        true,
+	}
+
+	skipExtensions := map[string]bool{
+		".bin":  true,
+		".exe":  true,
+		".dll":  true,
+		".so":   true,
+		".o":    true,
+		".a":    true,
+		".pyc":  true,
+		".pyo":  true,
+		".zip":  true,
+		".tar":  true,
+		".gz":   true,
+		".jpg":  true,
+		".jpeg": true,
+		".png":  true,
+		".gif":  true,
+		".pdf":  true,
+	}
+
+	// Walk through directory
+	err := filepath.WalkDir(rootPath, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			log.Printf("Error accessing path %s: %v", path, err)
+			return nil
+		}
+
+		// Skip directories
+		if d.IsDir() {
+			if skipDirs[d.Name()] {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		// Skip files with extensions to skip
+		ext := strings.ToLower(filepath.Ext(path))
+		if skipExtensions[ext] {
+			return nil
+		}
+
+		// Skip very large files (> 1MB)
+		fileInfo, err := d.Info()
+		if err != nil || fileInfo.Size() > 1024*1024 {
+			return nil
+		}
+
+		// Read file content
+		content, err := os.ReadFile(path)
+		if err != nil {
+			log.Printf("Warning: Failed to read file %s: %v", path, err)
+			return nil
+		}
+
+		// Skip empty files
+		if len(content) == 0 {
+			return nil
+		}
+
+		// Detect language from extension
+		language := detectLanguage(ext)
+
+		// Generate embedding for file content
+		embeddingVector, err := embedder.Embed(ctx, string(content))
+		if err != nil {
+			log.Printf("Warning: Failed to generate embedding for %s: %v", path, err)
+			return nil
+		}
+
+		// Create CodeBase entity
+		codebaseDoc := &codebase.CodeBase{
+			ID:        uuid.New(),
+			FilePath:  path,
+			Content:   string(content),
+			Embedding: embeddingVector,
+			Language:  language,
+			CreatedAt: time.Now(),
+		}
+
+		// Save to repository
+		if err := repo.Save(ctx, codebaseDoc); err != nil {
+			log.Printf("Warning: Failed to save codebase document for %s: %v", path, err)
+			return nil
+		}
+
+		log.Printf("Indexed file: %s (language: %s, size: %d bytes, embedding size: %d)", path, language, len(content), len(embeddingVector))
+		return nil
+	})
+
+	if err != nil {
+		log.Fatalf("Failed to walk directory %s: %v", rootPath, err)
+	}
+
+	log.Printf("Successfully completed indexing folder: %s", rootPath)
+}
+
+func detectLanguage(ext string) string {
+	ext = strings.ToLower(ext)
+	languageMap := map[string]string{
+		".go":    "go",
+		".py":    "python",
+		".java":  "java",
+		".js":    "javascript",
+		".ts":    "typescript",
+		".tsx":   "typescript",
+		".jsx":   "javascript",
+		".cpp":   "cpp",
+		".c":     "c",
+		".h":     "c",
+		".hpp":   "cpp",
+		".cs":    "csharp",
+		".rb":    "ruby",
+		".php":   "php",
+		".swift": "swift",
+		".kt":    "kotlin",
+		".rs":    "rust",
+		".sh":    "shell",
+		".sql":   "sql",
+		".html":  "html",
+		".css":   "css",
+		".scss":  "scss",
+		".json":  "json",
+		".xml":   "xml",
+		".yaml":  "yaml",
+		".yml":   "yaml",
+		".md":    "markdown",
+		".txt":   "text",
+	}
+
+	if lang, exists := languageMap[ext]; exists {
+		return lang
+	}
+	return "unknown"
 }

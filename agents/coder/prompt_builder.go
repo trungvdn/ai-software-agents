@@ -44,7 +44,7 @@ func (b *CoderPromptBuilder) Build(
 	prompt.WriteString("Bug:\n" + bugDescription + "\n\n")
 	prompt.WriteString("Change Plan:\n" + changePlan + "\n\n")
 	prompt.WriteString("Generate a code patch.\n\n")
-	prompt.WriteString("Return JSON only.")
+	prompt.WriteString("Return JSON only.\n\n")
 	prompt.WriteString("{\n")
 	prompt.WriteString("  \"patch\":[\n")
 	prompt.WriteString("    {\n")

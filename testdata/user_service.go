@@ -1,11 +1,10 @@
-package service
+package testdata
 
-type User struct {
-	Name string
+type UserService struct {
+	repo UserRepository
 }
 
-func GetUser(id string) (*User, error) {
-
-	user, err := repo.GetByID(id)
+func (s *UserService) GetUser(id string) (*User, error) {
+	user, err := s.repo.GetByID(id)
 	return user, err
 }

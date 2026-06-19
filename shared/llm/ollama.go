@@ -3,6 +3,7 @@ package llm
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -66,6 +67,7 @@ func (c *OllamaClient) Chat(ctx context.Context, prompt string) (string, error) 
 
 	var fullResponse string
 
+	log.Printf("LLM reasoning...")
 	err := c.Client.Generate(ctx, request, func(resp api.GenerateResponse) error {
 		fullResponse += resp.Response
 		return nil

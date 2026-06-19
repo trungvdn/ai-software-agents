@@ -8,6 +8,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/agents/bugfix"
 	"github.com/trungvdn/ai-software-agents/agents/coder"
 	"github.com/trungvdn/ai-software-agents/agents/planner"
+	"github.com/trungvdn/ai-software-agents/domain/codebase"
 	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
@@ -45,6 +46,8 @@ func main() {
 
 	historicalBugRepo := repositories.NewHistoricalBugRepository(db)
 
+	codeBaseRepo := repositories.NewCodeBaseRepository(db)
+
 	// Create embedder
 	embedder := embedding.NewOllamaEmbedder(cfg.OllamaBaseURL, cfg.OllamaModel)
 
@@ -60,9 +63,16 @@ func main() {
 		embedder,
 	)
 
+	// Codebase retriever
+	codeBaseRetriever := codebase.NewCodeBaseRetriever(
+		codeBaseRepo,
+		embedder,
+	)
+
 	mergeRetriever := retrieval.NewMergeRetriever(
 		reflectionRetriever,
 		historicalBugRetriever,
+		codeBaseRetriever,
 	)
 
 	reRanker := &retrieval.SimpleReRanker{}
