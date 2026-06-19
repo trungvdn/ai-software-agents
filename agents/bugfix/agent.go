@@ -1,6 +1,7 @@
 package bugfix
 
 import (
+	"github.com/trungvdn/ai-software-agents/agents/coder"
 	"github.com/trungvdn/ai-software-agents/agents/planner"
 	prompt_context "github.com/trungvdn/ai-software-agents/shared/context"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
@@ -16,6 +17,8 @@ type BugFixAgent struct {
 
 	planner planner.Planner
 
+	coder coder.Coder
+
 	llm llm.Client
 }
 
@@ -25,6 +28,7 @@ func NewBugFixAgent(
 	contextBuilder prompt_context.Builder,
 	llm llm.Client,
 	planner planner.Planner,
+	coder coder.Coder,
 ) BugFixAgent {
 	return BugFixAgent{
 		retriever:      retriever,
@@ -32,5 +36,6 @@ func NewBugFixAgent(
 		contextBuilder: contextBuilder,
 		llm:            llm,
 		planner:        planner,
+		coder:          coder,
 	}
 }

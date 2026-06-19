@@ -32,10 +32,7 @@ func (b *KnowledgeContextBuilder) Build(
 		Fix: Add nil check
 	*/
 	var builder strings.Builder
-	builder.WriteString("=== CONTEXT ===\n\n")
-	builder.WriteString("Relevant Knowledge:\n\n")
 	builder.WriteString("[Reflection]\n")
-
 	grouped := make(map[string][]retrieval.SearchResult)
 
 	for _, result := range results {

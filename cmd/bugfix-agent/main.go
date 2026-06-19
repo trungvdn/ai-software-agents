@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/trungvdn/ai-software-agents/agents/bugfix"
+	"github.com/trungvdn/ai-software-agents/agents/coder"
 	"github.com/trungvdn/ai-software-agents/agents/planner"
 	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
@@ -76,15 +77,24 @@ func main() {
 		log.Fatalf("Failed to create Ollama client: %v", err)
 	}
 
+	// Planner
 	planner := planner.NewLLMChangePlanner(ollamaClient)
 
+	// Coder
+	coder := coder.NewCoderAgent(
+		ollamaClient,
+	)
+
+	// Fix bug agent
 	fixBugAgent := bugfix.NewBugFixAgent(
 		mergeRetriever,
 		reRanker,
 		knowledgeContextBuilder,
 		ollamaClient,
 		planner,
+		coder,
 	)
+
 	// Create context with timeout to prevent hanging
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()

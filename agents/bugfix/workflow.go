@@ -92,5 +92,14 @@ func (a *BugFixAgent) FixBug(
 	}
 	response.Plan = plan
 
+	// Code generation based on change plan
+	codePatches, err := a.coder.GeneratePatches(ctx, bugDescription, plan)
+	if err != nil {
+		log.Printf("Error generating code: %v", err)
+		return nil, err
+	}
+
+	fmt.Println("Generated Code Patches:", codePatches)
+
 	return response, nil
 }

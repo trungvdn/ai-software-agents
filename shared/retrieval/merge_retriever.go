@@ -24,6 +24,7 @@ func (m *MergeRetriever) Retrieve(
 ) ([]SearchResult, error) {
 
 	var results []SearchResult
+	seen := map[string]struct{}{}
 	for _, retriever := range m.retrievers {
 		docs, err := retriever.Retrieve(
 			ctx,
@@ -45,9 +46,7 @@ func (m *MergeRetriever) Retrieve(
 			len(docs),
 			retriever,
 		)
-
 		// Deduplicate
-		seen := map[string]struct{}{}
 		for _, doc := range docs {
 			if _, exists := seen[doc.Content]; !exists {
 				seen[doc.Content] = struct{}{}
