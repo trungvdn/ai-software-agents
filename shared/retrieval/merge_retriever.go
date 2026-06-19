@@ -3,7 +3,6 @@ package retrieval
 import (
 	"context"
 	"log"
-	"strings"
 )
 
 type MergeRetriever struct {
@@ -48,15 +47,10 @@ func (m *MergeRetriever) Retrieve(
 		)
 
 		// Deduplicate
+		seen := map[string]struct{}{}
 		for _, doc := range docs {
-			exists := false
-			for _, existing := range results {
-				if strings.Contains(existing.Content, doc.Content) || strings.Contains(doc.Content, existing.Content) {
-					exists = true
-					break
-				}
-			}
-			if !exists {
+			if _, exists := seen[doc.Content]; !exists {
+				seen[doc.Content] = struct{}{}
 				results = append(results, doc)
 			}
 		}
