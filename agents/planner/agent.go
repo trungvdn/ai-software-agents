@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/trungvdn/ai-software-agents/domain/changeplan"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
+	"github.com/trungvdn/ai-software-agents/shared/utils"
 )
 
 type LLMChangePlanner struct {
@@ -46,16 +46,7 @@ func (p *LLMChangePlanner) Plan(
 	}
 
 	// Strip markdown code blocks if present (e.g., ```json ... ```)
-	jsonStr := strings.TrimSpace(response)
-	if strings.HasPrefix(jsonStr, "```") {
-		// Find the end of the opening code fence line
-		lines := strings.Split(jsonStr, "\n")
-		if len(lines) > 2 {
-			// Skip the opening ``` line and rejoin
-			jsonStr = strings.Join(lines[1:len(lines)-1], "\n")
-		}
-	}
-	jsonStr = strings.TrimSpace(jsonStr)
+	jsonStr := utils.StripCodeFences(response)
 	fmt.Println("LLM Response (after stripping code fences):", jsonStr)
 
 	// Parse the LLM response as JSON

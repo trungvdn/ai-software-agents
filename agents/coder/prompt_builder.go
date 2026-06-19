@@ -15,21 +15,29 @@ func (b *CoderPromptBuilder) Build(
 	bugDescription string,
 	changePlan string,
 ) string {
-	/*
-		You are a senior Go engineer.
+	/*You are a senior Go engineer.
 		Bug:
 		Fix nil pointer in UserService
 
 		Change Plan:
-		1. Add nil check
-		Affected Files:
-		- user_service.go
-		Steps:
-		1. Add nil check
+			1. Add nil check
+			Affected Files:
+			- user_service.go
+			Steps:
+			1. Add nil check
 
-		Generate a code patch.
+			Generate a code patch.
 
-		Return JSON only.
+			Return JSON only.
+			{
+	  "patch":[
+	    {
+	      "file_path":"",
+	      "patch":"",
+	      "explanation":""
+	    }
+	  ]
+	}
 	*/
 	var prompt strings.Builder
 	prompt.WriteString("You are a senior Go engineer.\n\n")
@@ -37,5 +45,14 @@ func (b *CoderPromptBuilder) Build(
 	prompt.WriteString("Change Plan:\n" + changePlan + "\n\n")
 	prompt.WriteString("Generate a code patch.\n\n")
 	prompt.WriteString("Return JSON only.")
+	prompt.WriteString("{\n")
+	prompt.WriteString("  \"patch\":[\n")
+	prompt.WriteString("    {\n")
+	prompt.WriteString("      \"file_path\":\"\",\n")
+	prompt.WriteString("      \"patch\":\"\",\n")
+	prompt.WriteString("      \"explanation\":\"\"\n")
+	prompt.WriteString("    }\n")
+	prompt.WriteString("  ]\n")
+	prompt.WriteString("}\n")
 	return prompt.String()
 }

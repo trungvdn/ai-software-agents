@@ -101,5 +101,7 @@ func (a *BugFixAgent) FixBug(
 
 	fmt.Println("Generated Code Patches:", codePatches)
 
+	response.CodePatches = codePatches
+
 	return response, nil
 }

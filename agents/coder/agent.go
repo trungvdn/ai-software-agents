@@ -9,6 +9,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/domain/changeplan"
 	"github.com/trungvdn/ai-software-agents/domain/codepatch"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
+	"github.com/trungvdn/ai-software-agents/shared/utils"
 )
 
 type CoderAgent struct {
@@ -17,13 +18,13 @@ type CoderAgent struct {
 
 func NewCoderAgent(
 	llm llm.Client,
-) CoderAgent {
-	return CoderAgent{
+) *CoderAgent {
+	return &CoderAgent{
 		llm: llm,
 	}
 }
 
-func (a CoderAgent) GeneratePatches(
+func (a *CoderAgent) GeneratePatches(
 	ctx context.Context,
 	bugDescription string,
 	plan *changeplan.ChangePlan,
@@ -69,11 +70,14 @@ func (a CoderAgent) GeneratePatches(
 
 	fmt.Println("LLM Response:", response)
 
+	// Strip markdown code blocks if present (e.g., ```json ... ```)
+	jsonStr := utils.StripCodeFences(response)
+
 	// Parse the LLM response as JSON
-	var patches []codepatch.CodePatch
-	if err := json.Unmarshal([]byte(response), &patches); err != nil {
+	var patchResponse PatchResponse
+	if err := json.Unmarshal([]byte(jsonStr), &patchResponse); err != nil {
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, response)
 	}
 
-	return patches, nil
+	return patchResponse.Patches, nil
 }

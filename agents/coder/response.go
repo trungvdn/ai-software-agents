@@ -7,3 +7,7 @@ import (
 type Response struct {
 	Patches []codepatch.CodePatch
 }
+
+type PatchResponse struct {
+	Patches []codepatch.CodePatch `json:"patch"`
+}
