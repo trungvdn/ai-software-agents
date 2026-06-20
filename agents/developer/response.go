@@ -15,12 +15,6 @@ type Response struct {
 	CodePatches []codepatch.CodePatch
 }
 
-type KnowledgeContext struct {
-	Reflections []string
-
-	HistoricalBugs []string
-}
-
 type CodeContext struct {
 	Files []SourceFile
 }
