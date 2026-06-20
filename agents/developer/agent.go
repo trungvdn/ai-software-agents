@@ -2,7 +2,6 @@ package developer
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 )
@@ -33,14 +32,15 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	}
 
 	// Step 2: Use tools to retrieve relevant code context
-	codeRetriever, err := a.codeRetriever.Retrieve(ctx, bug)
-
+	codeContext, err := a.codeRetriever.Retrieve(bug)
+	if err != nil {
+		return nil, err
+	}
 	// Step 3: Analyze the bug and generate a response using the LLM
-
-	fmt.Println(codeRetriever.Files)
 
 	// Step 4: Generate code patches based on the analysis and code context
 	return &Response{
-		Knowledge: knowledgeContext,
+		Knowledge:   knowledgeContext,
+		CodeContext: codeContext,
 	}, nil
 }

@@ -1,7 +1,6 @@
 package developer
 
 import (
-	"context"
 	"regexp"
 	"strings"
 
@@ -10,15 +9,13 @@ import (
 
 type CodeRetriever interface {
 	Retrieve(
-		ctx context.Context,
 		bug string,
 	) (*CodeContext, error)
 }
 
 type DefaultCodeRetriever struct {
 	searchSymbolTool *tools.SearchSymbolTool
-
-	readFileTool *tools.ReadFileTool
+	readFileTool     *tools.ReadFileTool
 }
 
 func NewDefaultCodeRetriever(
@@ -32,7 +29,6 @@ func NewDefaultCodeRetriever(
 }
 
 func (r *DefaultCodeRetriever) Retrieve(
-	ctx context.Context,
 	bug string,
 ) (*CodeContext, error) {
 	// Step 0: Extract relevant code symbols based on the bug description
@@ -96,16 +92,6 @@ func extractTargets(bug string) []string {
 	upperMatches := upperCasePattern.FindAllString(bug, -1)
 	for _, match := range upperMatches {
 		if len(match) > 2 && match != "AND" && match != "OR" && match != "THE" {
-			targets = append(targets, match)
-		}
-	}
-
-	// Pattern 3: snake_case words (function/variable names)
-	snakeCasePattern := regexp.MustCompile(`\b([a-z_][a-z0-9_]*)\b`)
-	snakeMatches := snakeCasePattern.FindAllString(bug, -1)
-	for _, match := range snakeMatches {
-		// Filter: minimum 3 chars and exclude common words
-		if len(match) >= 3 && !isCommonWord(match) {
 			targets = append(targets, match)
 		}
 	}
