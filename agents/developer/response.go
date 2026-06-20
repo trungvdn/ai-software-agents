@@ -15,10 +15,6 @@ type Response struct {
 	CodePatches []codepatch.CodePatch
 }
 
-type CodeContext struct {
-	Files []SourceFile
-}
-
 type SourceFile struct {
 	Path string
 

@@ -32,8 +32,8 @@ func (t *SearchSymbolTool) Name() string {
 
 func (t *SearchSymbolTool) Search(
 	symbol string,
-) ([]SymbolMatch, error) {
-	var matches []SymbolMatch
+) ([]*SymbolMatch, error) {
+	var matches []*SymbolMatch
 
 	ignoredDirs := map[string]bool{
 		".git":         true,
@@ -85,9 +85,6 @@ func (t *SearchSymbolTool) Search(
 		lineNum := 1
 
 		for scanner.Scan() {
-			if err := scanner.Err(); err != nil {
-				return nil
-			}
 			line := scanner.Text()
 			if strings.Contains(line, symbol) {
 				// Get relative path
@@ -95,13 +92,16 @@ func (t *SearchSymbolTool) Search(
 				if err != nil {
 					relPath = path
 				}
-				matches = append(matches, SymbolMatch{
+				matches = append(matches, &SymbolMatch{
 					File:  relPath,
 					Line:  lineNum,
 					Match: line,
 				})
 			}
 			lineNum++
+		}
+		if err := scanner.Err(); err != nil {
+			return nil
 		}
 
 		return nil

@@ -2,15 +2,14 @@ package developer
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/trungvdn/ai-software-agents/shared/llm"
-	"github.com/trungvdn/ai-software-agents/shared/tools"
 )
 
 type DeveloperAgent struct {
 	knowledgeRetriever KnowledgeRetriever
-	searchSymbolTool   *tools.SearchSymbolTool
-	readFileTool       *tools.ReadFileTool
+	codeRetriever      CodeRetriever
 
 	llm llm.Client
 }
@@ -33,9 +32,12 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		return nil, err
 	}
 
-	// Step 2: Analyze the bug and generate a response using the LLM
+	// Step 2: Use tools to retrieve relevant code context
+	codeRetriever, err := a.codeRetriever.Retrieve(ctx, bug)
 
-	// Step 3: Use tools to retrieve relevant code context
+	// Step 3: Analyze the bug and generate a response using the LLM
+
+	fmt.Println(codeRetriever.Files)
 
 	// Step 4: Generate code patches based on the analysis and code context
 	return &Response{
