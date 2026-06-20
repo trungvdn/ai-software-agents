@@ -30,12 +30,20 @@ func (b *DeveloperPromptBuilder) Build(
 	prompt.WriteString("Bug Description:\n" + bugDescription + "\n\n")
 	prompt.WriteString("Relevant Knowledge:\n")
 	prompt.WriteString("[Reflection]\n")
-	for i, reflection := range knowledge.Reflections {
-		prompt.WriteString(fmt.Sprintf("%d. %s\n\n", i+1, reflection.Content))
+	if len(knowledge.Reflections) == 0 {
+		prompt.WriteString("No relevant reflections found.\n\n")
+	} else {
+		for i, reflection := range knowledge.Reflections {
+			prompt.WriteString(fmt.Sprintf("%d. %s\n\n", i+1, reflection.Content))
+		}
 	}
 	prompt.WriteString("[Historical Bug]\n")
-	for i, historicalBug := range knowledge.HistoricalBugs {
-		prompt.WriteString(fmt.Sprintf("%d. %s\n\n", i+1, historicalBug.Content))
+	if len(knowledge.HistoricalBugs) == 0 {
+		prompt.WriteString("No relevant historical bugs found.\n\n")
+	} else {
+		for i, historicalBug := range knowledge.HistoricalBugs {
+			prompt.WriteString(fmt.Sprintf("%d. %s\n\n", i+1, historicalBug.Content))
+		}
 	}
 	prompt.WriteString("Analyze the root cause and suggest a fix.")
 	return prompt.String()
