@@ -22,7 +22,7 @@ func NewCodeBaseRepository(
 
 func (r *CodeBaseRepository) Save(
 	ctx context.Context,
-	codebase *codebase.CodeBase,
+	codebase *codebase.CodeDocument,
 ) error {
 	query := `
 		INSERT INTO codebase (id, file_path, content, embedding, language, created_at, updated_at)
@@ -33,8 +33,7 @@ func (r *CodeBaseRepository) Save(
 			embedding = EXCLUDED.embedding,
 			language = EXCLUDED.language,
 			created_at = EXCLUDED.created_at,
-			updated_at = EXCLUDED.updated_at,
-			embedding = EXCLUDED.embedding
+			updated_at = EXCLUDED.updated_at
 	`
 
 	// Convert embedding to pgvector format
@@ -57,9 +56,9 @@ func (r *CodeBaseRepository) SearchSimilar(
 	ctx context.Context,
 	embedding []float32,
 	limit int,
-) ([]codebase.CodeBase, error) {
+) ([]codebase.CodeDocument, error) {
 	query := `
-		SELECT id, file_path, content, embedding, language
+		SELECT id, file_path, content, language
 		FROM codebase
 		ORDER BY (embedding <=> $1::vector) ASC
 		LIMIT $2
@@ -74,10 +73,10 @@ func (r *CodeBaseRepository) SearchSimilar(
 	}
 	defer rows.Close()
 
-	var results []codebase.CodeBase
+	var results []codebase.CodeDocument
 	for rows.Next() {
-		var cb codebase.CodeBase
-		if err := rows.Scan(&cb.ID, &cb.FilePath, &cb.Content, &cb.Embedding, &cb.Language); err != nil {
+		var cb codebase.CodeDocument
+		if err := rows.Scan(&cb.ID, &cb.FilePath, &cb.Content, &cb.Language); err != nil {
 			return nil, err
 		}
 		results = append(results, cb)

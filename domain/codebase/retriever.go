@@ -7,22 +7,22 @@ import (
 	"github.com/trungvdn/ai-software-agents/shared/retrieval"
 )
 
-type CodeBaseRetriever struct {
-	repo     CodeBaseRepository
+type CodeDocumentRetriever struct {
+	repo     CodeDocumentRepository
 	embedder embedding.Embedder
 }
 
-func NewCodeBaseRetriever(
-	repo CodeBaseRepository,
+func NewCodeDocumentRetriever(
+	repo CodeDocumentRepository,
 	embedder embedding.Embedder,
-) *CodeBaseRetriever {
-	return &CodeBaseRetriever{
+) *CodeDocumentRetriever {
+	return &CodeDocumentRetriever{
 		repo:     repo,
 		embedder: embedder,
 	}
 }
 
-func (r *CodeBaseRetriever) Retrieve(
+func (r *CodeDocumentRetriever) Retrieve(
 	ctx context.Context,
 	query string,
 	topK int,

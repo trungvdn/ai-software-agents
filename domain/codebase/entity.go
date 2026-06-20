@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type CodeBase struct {
+type CodeDocument struct {
 	ID        uuid.UUID
 	FilePath  string
 	Content   string

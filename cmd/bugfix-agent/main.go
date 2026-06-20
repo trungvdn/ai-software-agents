@@ -64,7 +64,7 @@ func main() {
 	)
 
 	// Codebase retriever
-	codeBaseRetriever := codebase.NewCodeBaseRetriever(
+	codeBaseRetriever := codebase.NewCodeDocumentRetriever(
 		codeBaseRepo,
 		embedder,
 	)

@@ -1,5 +1,5 @@
 
-CREATE TABLE IF NOT EXISTS reflections
+CREATE TABLE IF NOT EXISTS codebase
 (
     id UUID PRIMARY KEY,
     file_path TEXT NOT NULL,

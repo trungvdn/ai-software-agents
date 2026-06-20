@@ -2,15 +2,15 @@ package codebase
 
 import "context"
 
-type CodeBaseRepository interface {
+type CodeDocumentRepository interface {
 	Save(
 		ctx context.Context,
-		doc *CodeBase,
+		doc *CodeDocument,
 	) error
 
 	SearchSimilar(
 		ctx context.Context,
 		embedding []float32,
 		limit int,
-	) ([]CodeBase, error)
+	) ([]CodeDocument, error)
 }

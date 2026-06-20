@@ -251,7 +251,7 @@ func retrieveHistoricalBug(ctx context.Context, repo historicalbug.HistoricalBug
 	}
 }
 
-func indexFolder(ctx context.Context, rootPath string, repo codebase.CodeBaseRepository, embedder embedding.Embedder) {
+func indexFolder(ctx context.Context, rootPath string, repo codebase.CodeDocumentRepository, embedder embedding.Embedder) {
 	// Define directories and file extensions to skip
 	skipDirs := map[string]bool{
 		".git":          true,
@@ -336,15 +336,16 @@ func indexFolder(ctx context.Context, rootPath string, repo codebase.CodeBaseRep
 			log.Printf("Warning: Failed to generate embedding for %s: %v", path, err)
 			return nil
 		}
-
-		// Create CodeBase entity
-		codebaseDoc := &codebase.CodeBase{
+		now := time.Now()
+		// Create CodeDocument entity
+		codebaseDoc := &codebase.CodeDocument{
 			ID:        uuid.New(),
 			FilePath:  path,
 			Content:   string(content),
 			Embedding: embeddingVector,
 			Language:  language,
-			CreatedAt: time.Now(),
+			CreatedAt: now,
+			UpdatedAt: &now,
 		}
 
 		// Save to repository
