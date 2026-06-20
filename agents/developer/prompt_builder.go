@@ -11,6 +11,7 @@ type DeveloperPromptBuilder struct {
 func (b *DeveloperPromptBuilder) Build(
 	bugDescription string,
 	knowledge *KnowledgeContext,
+	codeContext *CodeContext,
 ) string {
 	/*
 		You are a senior software engineer.
@@ -55,10 +56,10 @@ func (b *DeveloperPromptBuilder) Build(
 	}
 
 	prompt.WriteString("Relevant Code:\n")
-	if len(knowledge.CodeFiles) == 0 {
+	if len(codeContext.Files) == 0 {
 		prompt.WriteString("No relevant code files found.\n\n")
 	} else {
-		for i, codeFile := range knowledge.CodeFiles {
+		for i, codeFile := range codeContext.Files {
 			prompt.WriteString(fmt.Sprintf("%d. File: %s\n", i+1, codeFile.Path))
 			prompt.WriteString("```go\n")
 			prompt.WriteString(codeFile.Content)
@@ -68,9 +69,9 @@ func (b *DeveloperPromptBuilder) Build(
 
 	prompt.WriteString("Based on the analysis, provide your response ONLY as a valid JSON object (no markdown, no extra text) with exactly this structure:\n")
 	prompt.WriteString("{\n")
-	prompt.WriteString("  \"root_cause\": \"root cause\"\n")
-	prompt.WriteString("  \"fix_strategy\": \"strategy\"\n")
-	prompt.WriteString("  \"confidence\": \"0.87\"\n")
+	prompt.WriteString("  \"root_cause\": \"root cause,\"\n")
+	prompt.WriteString("  \"fix_strategy\": \"strategy,\"\n")
+	prompt.WriteString("  \"confidence\": 0.87\n")
 	prompt.WriteString("}\n\n")
 	prompt.WriteString("Where:\n")
 	prompt.WriteString("- root_cause: root case bug\n")

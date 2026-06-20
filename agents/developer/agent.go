@@ -9,6 +9,7 @@ import (
 type DeveloperAgent struct {
 	knowledgeRetriever KnowledgeRetriever
 	codeRetriever      CodeRetriever
+	promptBuilder      DeveloperPromptBuilder
 
 	llm llm.Client
 }
@@ -24,8 +25,8 @@ func NewDeveloperAgent(
 }
 
 func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, error) {
-	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
 
+	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
 	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, bug, 10)
 	if err != nil {
 		return nil, err
@@ -38,9 +39,22 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	}
 	// Step 3: Analyze the bug and generate a response using the LLM
 
+	prompt := a.promptBuilder.Build(bug, knowledgeContext, codeContext)
+
+	llmResponse, err := a.llm.Chat(ctx, prompt)
+	if err != nil {
+		return nil, err
+	}
+
+	analysis, err := ParseAnalysis(llmResponse)
+	if err != nil {
+		return nil, err
+	}
+
 	// Step 4: Generate code patches based on the analysis and code context
 	return &Response{
 		Knowledge:   knowledgeContext,
 		CodeContext: codeContext,
+		Analysis:    analysis,
 	}, nil
 }

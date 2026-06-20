@@ -1,7 +1,6 @@
 package developer
 
 import (
-	"fmt"
 	"slices"
 	"testing"
 
@@ -103,8 +102,7 @@ func TestRetrieve_FindsUserService(t *testing.T) {
 		tools.NewSearchSymbolTool("../../testdata"),
 		tools.NewReadFileTool("../../testdata"),
 	)
-	result, err := retriever.Retrieve(bug)
-	fmt.Println(result.Files)
+	_, err := retriever.Retrieve(bug)
 	if err != nil {
 		t.Fatalf("Retrieve returned error: %v", err)
 	}
