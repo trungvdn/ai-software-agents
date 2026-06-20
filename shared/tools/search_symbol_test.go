@@ -1,8 +1,6 @@
 package tools
 
 import (
-	"fmt"
-	"log"
 	"path/filepath"
 	"testing"
 )
@@ -18,7 +16,6 @@ func TestSearch_WithTestdata(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Search for UserService failed: %v", err)
 	}
-	log.Printf("Matches for UserService: %v", matches)
 
 	if len(matches) == 0 {
 		t.Errorf("expected to find UserService in testdata")
@@ -35,7 +32,6 @@ func TestSearch_WithTestdata(t *testing.T) {
 
 	// Search for UserController
 	matches, err = tool.Search("UserController")
-	fmt.Println("Matches for UserController:", matches)
 	if err != nil {
 		t.Fatalf("Search for UserController failed: %v", err)
 	}

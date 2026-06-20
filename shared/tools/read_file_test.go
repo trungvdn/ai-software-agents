@@ -1,21 +1,21 @@
 package tools
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestRead(t *testing.T) {
 
-	tool := NewReadFileTool()
+	tool := NewReadFileTool(
+		"../../testdata",
+	)
 
-	content, err := tool.Read("../../testdata/user_service.go")
+	content, err := tool.Read("user_service.go")
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println(content)
 
-	if content == "" {
-		t.Fatal("expected file content")
+	if len(content.Content) == 0 {
+		t.Errorf("expected file content, got empty string")
 	}
 }

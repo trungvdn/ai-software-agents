@@ -10,7 +10,9 @@ import (
 type DeveloperAgent struct {
 	knowledgeRetriever KnowledgeRetriever
 	searchSymbolTool   *tools.SearchSymbolTool
-	llm                llm.Client
+	readFileTool       *tools.ReadFileTool
+
+	llm llm.Client
 }
 
 func NewDeveloperAgent(

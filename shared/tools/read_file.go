@@ -1,18 +1,53 @@
 package tools
 
-import "os"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+)
 
-type ReadFileTool struct{}
+type FileContent struct {
+	Path string
 
-func NewReadFileTool() *ReadFileTool {
-	return &ReadFileTool{}
+	Content string
 }
 
-func (t *ReadFileTool) Read(path string) (string, error) {
+type ReadFileTool struct {
+	rootPath string
+}
+
+func NewReadFileTool(
+	rootPath string,
+) *ReadFileTool {
+	return &ReadFileTool{
+		rootPath: rootPath,
+	}
+}
+
+func (t *ReadFileTool) Name() string {
+	return "read_file"
+}
+
+func (t *ReadFileTool) Read(path string) (*FileContent, error) {
+	cleanPath := filepath.Clean(path)
+	if strings.Contains(
+		cleanPath,
+		"..",
+	) {
+		return nil, fmt.Errorf("invalid path: %s", path)
+	}
+	path = filepath.Join(
+		t.rootPath,
+		cleanPath,
+	)
 	b, err := os.ReadFile(path)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(b), nil
+	return &FileContent{
+		Path:    path,
+		Content: string(b),
+	}, nil
 }

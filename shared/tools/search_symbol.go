@@ -9,8 +9,9 @@ import (
 )
 
 type SymbolMatch struct {
-	File string `json:"file"`
-	Line int    `json:"line"`
+	File  string `json:"file"`
+	Line  int    `json:"line"`
+	Match string `json:"match"`
 }
 
 type SearchSymbolTool struct {
@@ -23,6 +24,10 @@ func NewSearchSymbolTool(
 	return &SearchSymbolTool{
 		rootPath: rootPath,
 	}
+}
+
+func (t *SearchSymbolTool) Name() string {
+	return "search_symbol"
 }
 
 func (t *SearchSymbolTool) Search(
@@ -78,7 +83,11 @@ func (t *SearchSymbolTool) Search(
 
 		scanner := bufio.NewScanner(file)
 		lineNum := 1
+
 		for scanner.Scan() {
+			if err := scanner.Err(); err != nil {
+				return nil
+			}
 			line := scanner.Text()
 			if strings.Contains(line, symbol) {
 				// Get relative path
@@ -87,8 +96,9 @@ func (t *SearchSymbolTool) Search(
 					relPath = path
 				}
 				matches = append(matches, SymbolMatch{
-					File: relPath,
-					Line: lineNum,
+					File:  relPath,
+					Line:  lineNum,
+					Match: line,
 				})
 			}
 			lineNum++
