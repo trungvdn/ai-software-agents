@@ -1,14 +1,12 @@
 package developer
 
 import (
-	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
-	"github.com/trungvdn/ai-software-agents/domain/reflection"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
 )
 
 type KnowledgeBuilder interface {
 	Build(
-		reflections []reflection.Reflection,
-		historicalBugs []historicalbug.HistoricalBug,
+		searchResults []retrieval.SearchResult,
 	) *KnowledgeContext
 }
 
@@ -16,12 +14,10 @@ type DefaultKnowledgeBuilder struct {
 }
 
 func (b *DefaultKnowledgeBuilder) Build(
-	reflections []reflection.Reflection,
-	historicalBugs []historicalbug.HistoricalBug,
+	searchResults []retrieval.SearchResult,
 ) *KnowledgeContext {
 
 	return &KnowledgeContext{
-		Reflections:    reflections,
-		HistoricalBugs: historicalBugs,
+		Results: searchResults,
 	}
 }
