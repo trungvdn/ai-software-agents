@@ -4,10 +4,12 @@ import (
 	"context"
 
 	"github.com/trungvdn/ai-software-agents/shared/llm"
+	"github.com/trungvdn/ai-software-agents/shared/tools"
 )
 
 type DeveloperAgent struct {
 	knowledgeRetriever KnowledgeRetriever
+	searchSymbolTool   *tools.SearchSymbolTool
 	llm                llm.Client
 }
 
