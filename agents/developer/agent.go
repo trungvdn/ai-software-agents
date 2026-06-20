@@ -1,6 +1,8 @@
 package developer
 
 import (
+	"context"
+
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 )
 
@@ -16,7 +18,7 @@ func NewDeveloperAgent(
 	}
 }
 
-func (a *DeveloperAgent) Execute(bug string) (*Response, error) {
+func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, error) {
 	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
 
 	// Step 2: Analyze the bug and generate a response using the LLM
