@@ -117,14 +117,3 @@ func extractTargets(bug string) []string {
 
 	return result
 }
-
-// isCommonWord returns true for common English words that are unlikely to be code symbols
-func isCommonWord(word string) bool {
-	commonWords := map[string]bool{
-		"the": true, "and": true, "for": true, "are": true, "but": true,
-		"not": true, "can": true, "has": true, "was": true, "were": true,
-		"with": true, "from": true, "that": true, "this": true, "when": true,
-		"get": true, "set": true, "is": true, "in": true, "at": true,
-	}
-	return commonWords[strings.ToLower(word)]
-}

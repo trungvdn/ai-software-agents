@@ -6,12 +6,9 @@ import (
 )
 
 type Response struct {
-	Analysis *analysis.Analysis
-
-	Knowledge *KnowledgeContext
-
+	Analysis    *analysis.Analysis
+	Knowledge   *KnowledgeContext
 	CodeContext *CodeContext
-
 	CodePatches []codepatch.CodePatch
 }
 

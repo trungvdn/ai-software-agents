@@ -46,9 +46,8 @@ func (t *ReadFileTool) Read(path string) (*FileContent, error) {
 		return nil, err
 	}
 
-	originalPath := cleanPath
 	return &FileContent{
-		Path:    originalPath,
+		Path:    path,
 		Content: string(b),
 	}, nil
 }
