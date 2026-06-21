@@ -62,22 +62,22 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	)
 
 	// Step 6: Reasoning build patch plan
-	llmPatchPlanResponse, err := a.llm.Chat(ctx, patchCandidatePrompt)
+	llmPatchCandidateResponse, err := a.llm.Chat(ctx, patchCandidatePrompt)
 	if err != nil {
 		return nil, err
 	}
 
-	// Step 7: Parse Response PatchPlan
-	patchPlan, err := ParsePatchCadidate(llmPatchPlanResponse)
+	// Step 7: Parse Response PatchCandidate
+	patchCandidate, err := ParsePatchCandidate(llmPatchCandidateResponse)
 	if err != nil {
 		return nil, err
 	}
 
 	//Step 8: Generate code patches based on patch plan
 	return &Response{
-		Knowledge:   knowledgeContext,
-		CodeContext: codeContext,
-		Analysis:    analysis,
-		PatchPlan:   patchPlan,
+		Knowledge:      knowledgeContext,
+		CodeContext:    codeContext,
+		Analysis:       analysis,
+		PatchCandidate: patchCandidate,
 	}, nil
 }

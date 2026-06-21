@@ -7,11 +7,11 @@ import (
 )
 
 type Response struct {
-	Analysis    *analysis.Analysis
-	PatchPlan   *patchcandidate.PatchCandidate
-	Knowledge   *KnowledgeContext
-	CodeContext *CodeContext
-	CodePatches []codepatch.CodePatch
+	Analysis       *analysis.Analysis
+	PatchCandidate *patchcandidate.PatchCandidate
+	Knowledge      *KnowledgeContext
+	CodeContext    *CodeContext
+	CodePatches    []codepatch.CodePatch
 }
 
 type SourceFile struct {

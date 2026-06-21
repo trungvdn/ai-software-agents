@@ -8,16 +8,16 @@ import (
 	"github.com/trungvdn/ai-software-agents/shared/utils"
 )
 
-func ParsePatchCadidate(
+func ParsePatchCandidate(
 	response string,
 ) (*patchcandidate.PatchCandidate, error) {
 	// Strip markdown code blocks if present (e.g., ```json ... ```)
 	jsonStr := utils.StripCodeFences(response)
 
 	// Parse the LLM response as JSON
-	var patchPlan patchcandidate.PatchCandidate
-	if err := json.Unmarshal([]byte(jsonStr), &patchPlan); err != nil {
+	var patchCandidate patchcandidate.PatchCandidate
+	if err := json.Unmarshal([]byte(jsonStr), &patchCandidate); err != nil {
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, response)
 	}
-	return &patchPlan, nil
+	return &patchCandidate, nil
 }
