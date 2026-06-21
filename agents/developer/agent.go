@@ -2,6 +2,7 @@ package developer
 
 import (
 	"context"
+	"log"
 
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 )
@@ -35,14 +36,20 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		return nil, err
 	}
 
+	log.Printf("Retrieved %d reflections and %d historical bugs for the bug description", len(knowledgeContext.Reflections), len(knowledgeContext.HistoricalBugs))
+
 	// Step 2: Retrieve relevant code context
 	codeContext, err := a.codeRetriever.Retrieve(bug)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Printf("Retrieved %d relevant source files for the bug description", len(codeContext.Files))
+
 	// Step 3: Build developer prompt
 	prompt := a.promptBuilder.Build(bug, knowledgeContext, codeContext)
+
+	log.Printf("Constructed prompt for LLM:\n%s", prompt)
 
 	// Step 4: Reasoning fix suggestion
 	llmResponse, err := a.llm.Chat(ctx, prompt)
@@ -50,11 +57,15 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		return nil, err
 	}
 
+	log.Printf("LLM Response for analysis:\n%s", llmResponse)
+
 	// Step 4: Parse Response
 	analysis, err := ParseAnalysis(llmResponse)
 	if err != nil {
 		return nil, err
 	}
+
+	log.Printf("LLM Analysis Suggested Fix:\n%v", analysis)
 
 	// Step 5: Build patch plan prompt
 	patchCandidatePrompt := a.promptBuilder.BuildPatchCandidate(
@@ -73,11 +84,15 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		return nil, err
 	}
 
+	for i, candidate := range patchCandidate {
+		log.Printf("Patch Candidate %d:\nFile: %s\nOriginalSnippet: %d\nProposedSnippet:\n%s\n  %s\nReason:", i+1, candidate.FilePath, candidate.OriginalSnippet, candidate.ProposedSnippet, candidate.Reason)
+	}
+
 	//Step 8: Generate code patches based on patch plan
 	return &Response{
 		Knowledge:      knowledgeContext,
 		CodeContext:    codeContext,
 		Analysis:       analysis,
-		PatchCandidate: patchCandidate,
+		PatchCandidate: patchCandidate[0],
 	}, nil
 }

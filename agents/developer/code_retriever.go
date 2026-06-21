@@ -1,6 +1,7 @@
 package developer
 
 import (
+	"log"
 	"regexp"
 	"strings"
 
@@ -33,7 +34,9 @@ func (r *DefaultCodeRetriever) Retrieve(
 ) (*CodeContext, error) {
 	// Step 0: Extract relevant code symbols based on the bug description
 	targets := extractTargets(bug)
+	log.Printf("CodeRetriever: Extracted targets from bug '%s': %v", bug, targets)
 	if len(targets) == 0 {
+		log.Printf("CodeRetriever: No targets extracted, returning empty context")
 		return &CodeContext{Files: []*tools.FileContent{}}, nil
 	}
 
@@ -49,8 +52,10 @@ func (r *DefaultCodeRetriever) Retrieve(
 
 		matches, err := r.searchSymbolTool.Search(target)
 		if err != nil {
+			log.Printf("CodeRetriever: Search for target '%s' failed: %v", target, err)
 			continue // Skip if search fails for a target
 		}
+		log.Printf("CodeRetriever: Found %d matches for target '%s'", len(matches), target)
 
 		// Add matches up to MaxFiles total
 		for _, match := range matches {
@@ -59,20 +64,26 @@ func (r *DefaultCodeRetriever) Retrieve(
 			}
 			if _, exists := fileMatches[match.File]; !exists {
 				fileMatches[match.File] = match
+				log.Printf("CodeRetriever: Added file match: %s (line %d)", match.File, match.Line)
 			}
 		}
 	}
+
+	log.Printf("CodeRetriever: Total unique files found: %d", len(fileMatches))
 
 	// Step 2: Read file contents for all matched files
 	fileContents := make([]*tools.FileContent, 0, len(fileMatches))
 	for file := range fileMatches {
 		content, err := r.readFileTool.Read(file)
 		if err != nil {
+			log.Printf("CodeRetriever: Failed to read file '%s': %v", file, err)
 			continue // Skip files that cannot be read
 		}
+		log.Printf("CodeRetriever: Successfully read file: %s", file)
 		fileContents = append(fileContents, content)
 	}
 
+	log.Printf("CodeRetriever: Returning %d file contents", len(fileContents))
 	return &CodeContext{
 		Files: fileContents,
 	}, nil

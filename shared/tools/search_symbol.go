@@ -3,6 +3,7 @@ package tools
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -49,6 +50,12 @@ func (t *SearchSymbolTool) Search(
 		".pdf": true,
 		".exe": true,
 	}
+	log.Printf("SearchSymbolTool: Starting search for symbol '%s' in rootPath: %s", symbol, t.rootPath)
+
+	// Check if rootPath exists
+	if info, err := os.Stat(t.rootPath); err != nil || !info.IsDir() {
+		return nil, fmt.Errorf("invalid rootPath %s: %v", t.rootPath, err)
+	}
 
 	err := filepath.Walk(t.rootPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -77,6 +84,7 @@ func (t *SearchSymbolTool) Search(
 		// Search for symbol in file
 		file, err := os.Open(path)
 		if err != nil {
+			log.Printf("SearchSymbolTool: Failed to open file %s: %v", path, err)
 			return nil
 		}
 		defer file.Close()
@@ -109,6 +117,11 @@ func (t *SearchSymbolTool) Search(
 
 	if err != nil {
 		return nil, fmt.Errorf("error searching for symbol: %w", err)
+	}
+
+	log.Printf("SearchSymbolTool: Search for '%s' complete - found %d total matches", symbol, len(matches))
+	for _, match := range matches {
+		log.Printf("SearchSymbolTool: Found match: %s:%d: %s", match.File, match.Line, match.Match)
 	}
 	return matches, nil
 }

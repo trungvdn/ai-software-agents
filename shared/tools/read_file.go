@@ -2,14 +2,14 @@ package tools
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
 type FileContent struct {
-	Path string
-
+	Path    string
 	Content string
 }
 
@@ -37,14 +37,17 @@ func (t *ReadFileTool) Read(path string) (*FileContent, error) {
 	) {
 		return nil, fmt.Errorf("invalid path: %s", path)
 	}
-	path = filepath.Join(
+	fullPath := filepath.Join(
 		t.rootPath,
 		cleanPath,
 	)
-	b, err := os.ReadFile(path)
+	log.Printf("ReadFileTool: Reading file from fullPath: %s (rootPath=%s, cleanPath=%s)", fullPath, t.rootPath, cleanPath)
+	b, err := os.ReadFile(fullPath)
 	if err != nil {
+		log.Printf("ReadFileTool: Failed to read file: %v", err)
 		return nil, err
 	}
+	log.Printf("ReadFileTool: Successfully read file, size: %d bytes", len(b))
 
 	return &FileContent{
 		Path:    cleanPath,
