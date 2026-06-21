@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/trungvdn/ai-software-agents/domain/patchcandidate"
@@ -29,9 +30,14 @@ func (p *DefaultPatchApplier) Apply(
 	// For now, we'll just log the patches to be applied.
 	for _, candidate := range candidates {
 		log.Printf("Applying patch to file %s:\n%s", candidate.FilePath, candidate.ProposedSnippet)
-		content := readFile(candidate.FilePath)
+		content, err := readFile(candidate.FilePath)
+		if err != nil {
+			return fmt.Errorf("failed to read file %s: %w", candidate.FilePath, err)
+		}
 		fmt.Printf("Original content of file %s:\n%s", candidate.FilePath, content)
-
+		if !strings.Contains(content, candidate.OriginalSnippet) {
+			return fmt.Errorf("original snippet not found in file %s. Cannot apply patch.", candidate.FilePath)
+		}
 		updated :=
 			strings.Replace(
 				content,
@@ -40,15 +46,19 @@ func (p *DefaultPatchApplier) Apply(
 				1,
 			)
 		log.Printf("Updated content for file %s:\n%s", candidate.FilePath, updated)
-		os.WriteFile(candidate.FilePath, []byte(updated), 0644)
+		err = os.WriteFile(candidate.FilePath, []byte(updated), 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write updated content to file %s: %w", candidate.FilePath, err)
+		}
 	}
 	return nil
 }
 
-func readFile(filePath string) string {
-	content, err := os.ReadFile(filePath)
+func readFile(filePath string) (string, error) {
+	cleanPath := filepath.Clean(filePath)
+	content, err := os.ReadFile(cleanPath)
 	if err != nil {
-		log.Fatalf("Failed to read file %s: %v", filePath, err)
+		return "", fmt.Errorf("Error reading file %s: %v", filePath, err)
 	}
-	return string(content)
+	return string(content), nil
 }
