@@ -93,24 +93,29 @@ func (b *DeveloperPromptBuilder) BuildPatchPlan(
 	analysis *analysis.Analysis,
 	codeContext *CodeContext) string {
 	/*
-		You are a senior software engineer.
-		Root cause:
-		Fix nil pointer in UserService
+				You are a senior software engineer.
+				Root cause:
+				Fix nil pointer in UserService
 
-		Bug Strategy:
+				Bug Strategy:
 
-		Relevant Files:
-		1.File: internal/user/user_service.go
-		<content>
-		2.File: internal/user/repository.go
-		<content>
+				Relevant Files:
+				1.File: internal/user/user_service.go
+				<content>
+				2.File: internal/user/repository.go
+				<content>
 
-		Based on the analysis, provide your response ONLY as a valid JSON array
-		FilePath string `json:"file_path"`
-		Reason string `json:"reason"`
-		Changes []string `json:"changes"`
+				Based on the analysis, provide your response ONLY as a valid JSON array
+				{
+		  "file_path":"...",
+		  "reason":"...",
+		  "changes":[
+		    "Add nil check after repository call",
+		    "Return ErrUserNotFound"
+		  ]
+		}
 
-		Create patch plan fix.
+				Create patch plan fix.
 	*/
 	var prompt strings.Builder
 	prompt.WriteString("You are a senior software engineer.\n\n")
@@ -128,24 +133,18 @@ func (b *DeveloperPromptBuilder) BuildPatchPlan(
 		}
 	}
 	prompt.WriteString("Based on the analysis, provide your response ONLY as a valid JSON array (no markdown, no extra text) with exactly this structure:\n")
-	prompt.WriteString("[\n")
-	prompt.WriteString("  {\n")
-	prompt.WriteString("    \"file_path\": \"path/to/file\",\n")
-	prompt.WriteString("    \"reason\": \"reason for the change\",\n")
-	prompt.WriteString("    \"changes\": [\n")
-	prompt.WriteString("      {\n")
-	prompt.WriteString("        \"line\": 42,\n")
-	prompt.WriteString("        \"type\": \"modify\",\n")
-	prompt.WriteString("        \"content\": \"code content to modify or add (empty for delete)\"\n")
-	prompt.WriteString("      }\n")
-	prompt.WriteString("    ]\n")
-	prompt.WriteString("  }\n")
-	prompt.WriteString("]\n\n")
+	prompt.WriteString("{\n")
+	prompt.WriteString("  \"file_path\": \"file path to patch\",\n")
+	prompt.WriteString("  \"reason\": \"reason for the patch\",\n")
+	prompt.WriteString("  \"changes\": [\n")
+	prompt.WriteString("    \"Add nil check after repository call\",\n")
+	prompt.WriteString("    \"Return ErrUserNotFound\"\n")
+	prompt.WriteString("  ]\n")
+	prompt.WriteString("}\n\n")
 	prompt.WriteString("Where:\n")
-	prompt.WriteString("- file: file path to patch\n")
-	prompt.WriteString("- line: line number to apply the patch (for add, it's the line to insert before; for modify/delete, it's the line to modify/delete)\n")
-	prompt.WriteString("- type: type of patch operation (add, modify, delete)\n")
-	prompt.WriteString("- content: code content to add or modify (empty for delete)\n")
+	prompt.WriteString("- file_path: file path to patch\n")
+	prompt.WriteString("- reason: reason for the patch\n")
+	prompt.WriteString("- changes: list of code changes, each change should be a string describing a single code modification (e.g., add a line, modify a line, delete a line)\n")
 	prompt.WriteString("- Ensure all strings are properly escaped\n")
 	prompt.WriteString("- Return ONLY valid JSON, no other text\n")
 	prompt.WriteString("Create patch plan fix.")

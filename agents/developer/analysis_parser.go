@@ -13,7 +13,6 @@ func ParseAnalysis(
 ) (*analysis.Analysis, error) {
 	// Strip markdown code blocks if present (e.g., ```json ... ```)
 	jsonStr := utils.StripCodeFences(response)
-	fmt.Println("LLM Response (after stripping code fences):", jsonStr)
 
 	// Parse the LLM response as JSON
 	var analysis analysis.Analysis
