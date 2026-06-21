@@ -2,6 +2,7 @@ package developer
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/trungvdn/ai-software-agents/domain/codepatch"
@@ -12,7 +13,7 @@ type PatchGenerator interface {
 	Generate(
 		candidate []*patchcandidate.PatchCandidate,
 		codeContext *CodeContext,
-	) (*codepatch.CodePatch, error)
+	) ([]*codepatch.CodePatch, error)
 }
 
 type DefaultPatchGenerator struct{}
@@ -24,17 +25,26 @@ func NewDefaultPatchGenerator() *DefaultPatchGenerator {
 func (g *DefaultPatchGenerator) Generate(
 	candidate []*patchcandidate.PatchCandidate,
 	codeContext *CodeContext,
-) (*codepatch.CodePatch, error) {
+) ([]*codepatch.CodePatch, error) {
 	// Validate the candidate against the code context
-	for _, file := range codeContext.Files {
-		if err := validateCandidate(candidate, file.Content); err != nil {
-			return nil, fmt.Errorf("validation failed for file %s: %w", file.Path, err)
-		}
-	}
+	// TODO: Implement validation logic to ensure the candidate's file path and snippets are consistent with the code context.
+	// for _, file := range codeContext.Files {
+	// 	if err := validateCandidate(candidate, file.Content); err != nil {
+	// 		return nil, fmt.Errorf("validation failed for file %s: %w", file.Path, err)
+	// 	}
+	// }
 
 	// Generate the code patch based on the candidate and code context
-
-	return &codepatch.CodePatch{}, nil
+	codePatches := []*codepatch.CodePatch{}
+	for _, c := range candidate {
+		diff := generateDiff(c.OriginalSnippet, c.ProposedSnippet)
+		log.Printf("Generated diff for candidate in file %s:\n%s", c.FilePath, diff)
+		codePatches = append(codePatches, &codepatch.CodePatch{
+			FilePath: c.FilePath,
+			Diff:     diff,
+		})
+	}
+	return codePatches, nil
 }
 
 func validateCandidate(

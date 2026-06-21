@@ -53,11 +53,15 @@ func (t *SearchSymbolTool) Search(
 	log.Printf("SearchSymbolTool: Starting search for symbol '%s' in rootPath: %s", symbol, t.rootPath)
 
 	// Check if rootPath exists
-	if info, err := os.Stat(t.rootPath); err != nil || !info.IsDir() {
-		return nil, fmt.Errorf("invalid rootPath %s: %v", t.rootPath, err)
+	info, err := os.Stat(t.rootPath)
+	if err != nil {
+		return nil, fmt.Errorf("error accessing rootPath %s: %v", t.rootPath, err)
+	}
+	if !info.IsDir() {
+		return nil, fmt.Errorf("rootPath %s is not a directory", t.rootPath)
 	}
 
-	err := filepath.Walk(t.rootPath, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(t.rootPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil // continue walking
 		}

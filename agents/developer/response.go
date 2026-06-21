@@ -8,7 +8,7 @@ import (
 
 type Response struct {
 	Analysis       *analysis.Analysis
-	PatchCandidate *patchcandidate.PatchCandidate
+	PatchCandidate []*patchcandidate.PatchCandidate
 	Knowledge      *KnowledgeContext
 	CodeContext    *CodeContext
 	CodePatches    []codepatch.CodePatch

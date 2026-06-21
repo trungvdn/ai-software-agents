@@ -85,7 +85,7 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	}
 
 	for i, candidate := range patchCandidate {
-		log.Printf("Patch Candidate %d:\nFile: %s\nOriginalSnippet: %d\nProposedSnippet:\n%s\n  %s\nReason:", i+1, candidate.FilePath, candidate.OriginalSnippet, candidate.ProposedSnippet, candidate.Reason)
+		log.Printf("Patch Candidate %d:\nFile: %s\nOriginalSnippet: %s\nProposedSnippet:\n%s\n  %s\nReason:", i+1, candidate.FilePath, candidate.OriginalSnippet, candidate.ProposedSnippet, candidate.Reason)
 	}
 
 	//Step 8: Generate code patches based on patch plan
@@ -93,6 +93,6 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		Knowledge:      knowledgeContext,
 		CodeContext:    codeContext,
 		Analysis:       analysis,
-		PatchCandidate: patchCandidate[0],
+		PatchCandidate: patchCandidate,
 	}, nil
 }
