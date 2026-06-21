@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/trungvdn/ai-software-agents/domain/codepatch"
 	"github.com/trungvdn/ai-software-agents/domain/patchcandidate"
 )
@@ -18,7 +19,7 @@ type DiffGenerator interface {
 
 type DefaultDiffGenerator struct{}
 
-func NewDefaultPatchGenerator() *DefaultDiffGenerator {
+func NewDefaultDiffGenerator() *DefaultDiffGenerator {
 	return &DefaultDiffGenerator{}
 }
 
@@ -68,8 +69,47 @@ func generateDiff(
 	originalSnippet string,
 	modifiedSnippet string,
 ) string {
-	// For simplicity, we will just return a string that represents the diff.
-	// In a real-world scenario, you would use a proper diff library to generate the diff.
-	// use lib github.com/sergi/go-diff for a more accurate diff representation.
-	return fmt.Sprintf("Diff:\n- %s\n+ %s", originalSnippet, modifiedSnippet)
+	dmp := diffmatchpatch.New()
+
+	// Compute line-based diffs
+	diffs := dmp.DiffMain(originalSnippet, modifiedSnippet, true)
+
+	// Convert to unified diff format
+	var result strings.Builder
+
+	// Write unified diff header
+	result.WriteString("--- original\n")
+	result.WriteString("+++ modified\n")
+
+	// Generate unified diff output
+	for _, diff := range diffs {
+		switch diff.Type {
+		case diffmatchpatch.DiffDelete:
+			// Removed lines
+			lines := strings.Split(diff.Text, "\n")
+			for _, line := range lines {
+				if line != "" {
+					result.WriteString("- " + line + "\n")
+				}
+			}
+		case diffmatchpatch.DiffInsert:
+			// Added lines
+			lines := strings.Split(diff.Text, "\n")
+			for _, line := range lines {
+				if line != "" {
+					result.WriteString("+ " + line + "\n")
+				}
+			}
+		case diffmatchpatch.DiffEqual:
+			// Context lines
+			lines := strings.Split(diff.Text, "\n")
+			for _, line := range lines {
+				if line != "" {
+					result.WriteString("  " + line + "\n")
+				}
+			}
+		}
+	}
+
+	return result.String()
 }

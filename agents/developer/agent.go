@@ -12,6 +12,7 @@ type DeveloperAgent struct {
 	codeRetriever      CodeRetriever
 	promptBuilder      *DeveloperPromptBuilder
 	diffGenerator      DiffGenerator
+	patchApplier       PatchApplier
 
 	llm llm.Client
 }
@@ -21,6 +22,7 @@ func NewDeveloperAgent(
 	codeRetriever CodeRetriever,
 	prompt *DeveloperPromptBuilder,
 	diffGenerator DiffGenerator,
+	patchApplier PatchApplier,
 	llm llm.Client,
 ) *DeveloperAgent {
 	return &DeveloperAgent{
@@ -28,6 +30,7 @@ func NewDeveloperAgent(
 		codeRetriever:      codeRetriever,
 		promptBuilder:      prompt,
 		diffGenerator:      diffGenerator,
+		patchApplier:       patchApplier,
 		llm:                llm,
 	}
 }
@@ -87,11 +90,25 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		return nil, err
 	}
 
+	for i, candidate := range patchCandidate {
+		log.Printf("Patch Candidate %d:\nFile: %s\nOriginal Snippet:\n%s\nModified Snippet:\n%s", i+1, candidate.FilePath, candidate.OriginalSnippet, candidate.ProposedSnippet)
+	}
+
 	// Step 8: Generate code patches based on patch candidate
 	codePatches, err := a.diffGenerator.Generate(patchCandidate, codeContext)
+	if err != nil {
+		return nil, err
+	}
+
 	for i, patch := range codePatches {
 		log.Printf("Generated Code Patch %d:\nFile: %s\nDiff:\n%s", i+1, patch.FilePath, patch.Diff)
 	}
+
+	err = a.patchApplier.Apply(patchCandidate)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Response{
 		Knowledge:      knowledgeContext,
 		CodeContext:    codeContext,

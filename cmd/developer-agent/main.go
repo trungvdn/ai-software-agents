@@ -85,7 +85,9 @@ func main() {
 
 	promptBuilder := developer.NewDefaultPromptBuilder()
 
-	diffGenerator := developer.NewDefaultPatchGenerator()
+	diffGenerator := developer.NewDefaultDiffGenerator()
+
+	patchApplier := developer.NewDefaultPatchApplier()
 
 	// Developer Agent
 	developerAgent := developer.NewDeveloperAgent(
@@ -93,6 +95,7 @@ func main() {
 		codeRetriever,
 		promptBuilder,
 		diffGenerator,
+		patchApplier,
 		ollamaClient,
 	)
 
