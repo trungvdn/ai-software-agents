@@ -104,10 +104,10 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		log.Printf("Generated Code Patch %d:\nFile: %s\nDiff:\n%s", i+1, patch.FilePath, patch.Diff)
 	}
 
-	err = a.patchApplier.Apply(patchCandidate)
-	if err != nil {
-		return nil, err
-	}
+	// err = a.patchApplier.Apply(patchCandidate)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return &Response{
 		Knowledge:      knowledgeContext,

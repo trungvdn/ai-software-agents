@@ -16,10 +16,14 @@ type PatchApplier interface {
 	) error
 }
 
-type DefaultPatchApplier struct{}
+type DefaultPatchApplier struct {
+	rootPath string
+}
 
-func NewDefaultPatchApplier() *DefaultPatchApplier {
-	return &DefaultPatchApplier{}
+func NewDefaultPatchApplier(rootPath string) *DefaultPatchApplier {
+	return &DefaultPatchApplier{
+		rootPath: rootPath,
+	}
 }
 
 func (p *DefaultPatchApplier) Apply(
@@ -30,7 +34,7 @@ func (p *DefaultPatchApplier) Apply(
 	// For now, we'll just log the patches to be applied.
 	for _, candidate := range candidates {
 		log.Printf("Applying patch to file %s:\n%s", candidate.FilePath, candidate.ProposedSnippet)
-		content, err := readFile(candidate.FilePath)
+		content, err := readFile(p.rootPath, candidate.FilePath)
 		if err != nil {
 			return fmt.Errorf("failed to read file %s: %w", candidate.FilePath, err)
 		}
@@ -54,8 +58,16 @@ func (p *DefaultPatchApplier) Apply(
 	return nil
 }
 
-func readFile(filePath string) (string, error) {
+func readFile(rootPath string, filePath string) (string, error) {
 	cleanPath := filepath.Clean(filePath)
+	absPath := filepath.Join(
+		rootPath,
+		filePath,
+	)
+	// Check if the absolute path is within the rootPath to prevent directory traversal
+	if !strings.HasPrefix(absPath, rootPath) {
+		return "", fmt.Errorf("file path %s is outside of the root path %s", filePath, rootPath)
+	}
 	content, err := os.ReadFile(cleanPath)
 	if err != nil {
 		return "", fmt.Errorf("Error reading file %s: %v", filePath, err)

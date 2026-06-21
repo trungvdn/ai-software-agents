@@ -87,7 +87,9 @@ func main() {
 
 	diffGenerator := developer.NewDefaultDiffGenerator()
 
-	patchApplier := developer.NewDefaultPatchApplier()
+	patchApplier := developer.NewDefaultPatchApplier(
+		absTestdataPath,
+	)
 
 	// Developer Agent
 	developerAgent := developer.NewDeveloperAgent(
