@@ -11,6 +11,7 @@ type DeveloperAgent struct {
 	knowledgeRetriever KnowledgeRetriever
 	codeRetriever      CodeRetriever
 	promptBuilder      *DeveloperPromptBuilder
+	diffGenerator      DiffGenerator
 
 	llm llm.Client
 }
@@ -19,12 +20,14 @@ func NewDeveloperAgent(
 	knowledgeRetriever KnowledgeRetriever,
 	codeRetriever CodeRetriever,
 	prompt *DeveloperPromptBuilder,
+	diffGenerator DiffGenerator,
 	llm llm.Client,
 ) *DeveloperAgent {
 	return &DeveloperAgent{
 		knowledgeRetriever: knowledgeRetriever,
 		codeRetriever:      codeRetriever,
 		promptBuilder:      prompt,
+		diffGenerator:      diffGenerator,
 		llm:                llm,
 	}
 }
@@ -84,15 +87,16 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 		return nil, err
 	}
 
-	for i, candidate := range patchCandidate {
-		log.Printf("Patch Candidate %d:\nFile: %s\nOriginalSnippet: %s\nProposedSnippet:\n%s\n  %s\nReason:", i+1, candidate.FilePath, candidate.OriginalSnippet, candidate.ProposedSnippet, candidate.Reason)
+	// Step 8: Generate code patches based on patch candidate
+	codePatches, err := a.diffGenerator.Generate(patchCandidate, codeContext)
+	for i, patch := range codePatches {
+		log.Printf("Generated Code Patch %d:\nFile: %s\nDiff:\n%s", i+1, patch.FilePath, patch.Diff)
 	}
-
-	//Step 8: Generate code patches based on patch plan
 	return &Response{
 		Knowledge:      knowledgeContext,
 		CodeContext:    codeContext,
 		Analysis:       analysis,
 		PatchCandidate: patchCandidate,
+		CodePatches:    codePatches,
 	}, nil
 }

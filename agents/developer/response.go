@@ -11,11 +11,10 @@ type Response struct {
 	PatchCandidate []*patchcandidate.PatchCandidate
 	Knowledge      *KnowledgeContext
 	CodeContext    *CodeContext
-	CodePatches    []codepatch.CodePatch
+	CodePatches    []*codepatch.CodePatch
 }
 
 type SourceFile struct {
-	Path string
-
+	Path    string
 	Content string
 }

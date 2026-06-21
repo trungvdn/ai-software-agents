@@ -9,21 +9,21 @@ import (
 	"github.com/trungvdn/ai-software-agents/domain/patchcandidate"
 )
 
-type PatchGenerator interface {
+type DiffGenerator interface {
 	Generate(
-		candidate []*patchcandidate.PatchCandidate,
+		candidates []*patchcandidate.PatchCandidate,
 		codeContext *CodeContext,
 	) ([]*codepatch.CodePatch, error)
 }
 
-type DefaultPatchGenerator struct{}
+type DefaultDiffGenerator struct{}
 
-func NewDefaultPatchGenerator() *DefaultPatchGenerator {
-	return &DefaultPatchGenerator{}
+func NewDefaultPatchGenerator() *DefaultDiffGenerator {
+	return &DefaultDiffGenerator{}
 }
 
-func (g *DefaultPatchGenerator) Generate(
-	candidate []*patchcandidate.PatchCandidate,
+func (g *DefaultDiffGenerator) Generate(
+	candidates []*patchcandidate.PatchCandidate,
 	codeContext *CodeContext,
 ) ([]*codepatch.CodePatch, error) {
 	// Validate the candidate against the code context
@@ -36,7 +36,7 @@ func (g *DefaultPatchGenerator) Generate(
 
 	// Generate the code patch based on the candidate and code context
 	codePatches := []*codepatch.CodePatch{}
-	for _, c := range candidate {
+	for _, c := range candidates {
 		diff := generateDiff(c.OriginalSnippet, c.ProposedSnippet)
 		log.Printf("Generated diff for candidate in file %s:\n%s", c.FilePath, diff)
 		codePatches = append(codePatches, &codepatch.CodePatch{
@@ -48,11 +48,11 @@ func (g *DefaultPatchGenerator) Generate(
 }
 
 func validateCandidate(
-	candidate []*patchcandidate.PatchCandidate,
+	candidates []*patchcandidate.PatchCandidate,
 	fileContent string,
 ) error {
 	// Validate that the candidate's file path matches the provided file content
-	for _, c := range candidate {
+	for _, c := range candidates {
 		if !strings.Contains(
 			fileContent,
 			c.OriginalSnippet,
