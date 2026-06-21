@@ -59,16 +59,16 @@ func (p *DefaultPatchApplier) Apply(
 }
 
 func readFile(rootPath string, filePath string) (string, error) {
-	cleanPath := filepath.Clean(filePath)
+	absRoot, _ := filepath.Abs(rootPath)
 	absPath := filepath.Join(
 		rootPath,
 		filePath,
 	)
 	// Check if the absolute path is within the rootPath to prevent directory traversal
-	if !strings.HasPrefix(absPath, rootPath) {
+	if !strings.HasPrefix(absPath, absRoot) {
 		return "", fmt.Errorf("file path %s is outside of the root path %s", filePath, rootPath)
 	}
-	content, err := os.ReadFile(cleanPath)
+	content, err := os.ReadFile(absPath)
 	if err != nil {
 		return "", fmt.Errorf("Error reading file %s: %v", filePath, err)
 	}
