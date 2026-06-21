@@ -24,18 +24,16 @@
 
 Developer Agent
 
-    ↓
-
-Memory Retrieval
-
-    ↓
-
-Reasoning
-
-    ↓
-
-Tool Use
-
-    ↓
-
-Patch Generation
+├── Knowledge Retriever ✅
+│
+├── Code Retriever ✅
+│
+├── Prompt Builder ✅
+│
+├── LLM Reasoning ✅
+│
+├── Analysis Parser ✅
+│
+├── Patch Generator ❌
+│
+└── Reflection Writer ❌

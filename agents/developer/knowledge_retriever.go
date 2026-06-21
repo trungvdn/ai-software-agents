@@ -16,8 +16,18 @@ type KnowledgeRetriever interface {
 }
 
 type DefaultKnowledgeRetriever struct {
-	reflectionRetriever    reflection.ReflectionRetriever
-	historicalBugRetriever historicalbug.HistoricalBugRetriever
+	reflectionRetriever    *reflection.ReflectionRetriever
+	historicalBugRetriever *historicalbug.HistoricalBugRetriever
+}
+
+func NewDefaultKnowledgeRetriever(
+	reflectionRetriever *reflection.ReflectionRetriever,
+	historicalBugRetriever *historicalbug.HistoricalBugRetriever) *DefaultKnowledgeRetriever {
+	return &DefaultKnowledgeRetriever{
+		reflectionRetriever:    reflectionRetriever,
+		historicalBugRetriever: historicalBugRetriever,
+	}
+
 }
 
 func (b *DefaultKnowledgeRetriever) Retrieve(

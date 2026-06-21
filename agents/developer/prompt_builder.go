@@ -8,6 +8,10 @@ import (
 type DeveloperPromptBuilder struct {
 }
 
+func NewDefaultPromptBuilder() *DeveloperPromptBuilder {
+	return &DeveloperPromptBuilder{}
+}
+
 func (b *DeveloperPromptBuilder) Build(
 	bugDescription string,
 	knowledge *KnowledgeContext,
@@ -81,4 +85,8 @@ func (b *DeveloperPromptBuilder) Build(
 	prompt.WriteString("- Return ONLY valid JSON, no other text\n")
 	prompt.WriteString("Analyze the root cause and suggest a fix.")
 	return prompt.String()
+}
+
+func (b *DeveloperPromptBuilder) BuildPatchPlan() string {
+	return ""
 }
