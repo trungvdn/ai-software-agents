@@ -57,7 +57,9 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	}
 
 	// Step 5: Build patch plan prompt
-	patchPlanPrompt := a.promptBuilder.BuildPatchPlan()
+	patchPlanPrompt := a.promptBuilder.BuildPatchPlan(
+		analysis, codeContext,
+	)
 
 	// Step 6: Reasoning build patch plan
 	llmPatchPlanResponse, err := a.llm.Chat(ctx, patchPlanPrompt)

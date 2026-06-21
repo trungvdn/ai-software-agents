@@ -3,6 +3,8 @@ package developer
 import (
 	"fmt"
 	"strings"
+
+	"github.com/trungvdn/ai-software-agents/domain/analysis"
 )
 
 type DeveloperPromptBuilder struct {
@@ -87,6 +89,66 @@ func (b *DeveloperPromptBuilder) Build(
 	return prompt.String()
 }
 
-func (b *DeveloperPromptBuilder) BuildPatchPlan() string {
-	return ""
+func (b *DeveloperPromptBuilder) BuildPatchPlan(
+	analysis *analysis.Analysis,
+	codeContext *CodeContext) string {
+	/*
+		You are a senior software engineer.
+		Root cause:
+		Fix nil pointer in UserService
+
+		Bug Strategy:
+
+		Relevant Files:
+		1.File: internal/user/user_service.go
+		<content>
+		2.File: internal/user/repository.go
+		<content>
+
+		Based on the analysis, provide your response ONLY as a valid JSON array
+		FilePath string `json:"file_path"`
+		Reason string `json:"reason"`
+		Changes []string `json:"changes"`
+
+		Create patch plan fix.
+	*/
+	var prompt strings.Builder
+	prompt.WriteString("You are a senior software engineer.\n\n")
+	prompt.WriteString("Root cause:\n" + analysis.RootCause + "\n\n")
+	prompt.WriteString("Bug Strategy:\n" + analysis.SuggestedFix + "\n\n")
+	prompt.WriteString("Relevant Code:\n")
+	if len(codeContext.Files) == 0 {
+		prompt.WriteString("No relevant code files found.\n\n")
+	} else {
+		for i, codeFile := range codeContext.Files {
+			prompt.WriteString(fmt.Sprintf("%d. File: %s\n", i+1, codeFile.Path))
+			prompt.WriteString("```go\n")
+			prompt.WriteString(codeFile.Content)
+			prompt.WriteString("\n```\n\n")
+		}
+	}
+	prompt.WriteString("Based on the analysis, provide your response ONLY as a valid JSON array (no markdown, no extra text) with exactly this structure:\n")
+	prompt.WriteString("[\n")
+	prompt.WriteString("  {\n")
+	prompt.WriteString("    \"file_path\": \"path/to/file\",\n")
+	prompt.WriteString("    \"reason\": \"reason for the change\",\n")
+	prompt.WriteString("    \"changes\": [\n")
+	prompt.WriteString("      {\n")
+	prompt.WriteString("        \"line\": 42,\n")
+	prompt.WriteString("        \"type\": \"modify\",\n")
+	prompt.WriteString("        \"content\": \"code content to modify or add (empty for delete)\"\n")
+	prompt.WriteString("      }\n")
+	prompt.WriteString("    ]\n")
+	prompt.WriteString("  }\n")
+	prompt.WriteString("]\n\n")
+	prompt.WriteString("Where:\n")
+	prompt.WriteString("- file: file path to patch\n")
+	prompt.WriteString("- line: line number to apply the patch (for add, it's the line to insert before; for modify/delete, it's the line to modify/delete)\n")
+	prompt.WriteString("- type: type of patch operation (add, modify, delete)\n")
+	prompt.WriteString("- content: code content to add or modify (empty for delete)\n")
+	prompt.WriteString("- Ensure all strings are properly escaped\n")
+	prompt.WriteString("- Return ONLY valid JSON, no other text\n")
+	prompt.WriteString("Create patch plan fix.")
+
+	return prompt.String()
 }

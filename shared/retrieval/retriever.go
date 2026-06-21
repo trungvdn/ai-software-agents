@@ -9,3 +9,19 @@ type Retriever interface {
 		topK int,
 	) ([]SearchResult, error)
 }
+
+type ReflectionRetriever interface {
+	Retrieve(
+		ctx context.Context,
+		query string,
+		topK int,
+	) ([]SearchResult, error)
+}
+
+type HistoricalBugRetriever interface {
+	Retrieve(
+		ctx context.Context,
+		query string,
+		topK int,
+	) ([]SearchResult, error)
+}

@@ -3,8 +3,7 @@ package developer
 import (
 	"context"
 
-	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
-	"github.com/trungvdn/ai-software-agents/domain/reflection"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
 )
 
 type KnowledgeRetriever interface {
@@ -16,13 +15,13 @@ type KnowledgeRetriever interface {
 }
 
 type DefaultKnowledgeRetriever struct {
-	reflectionRetriever    *reflection.ReflectionRetriever
-	historicalBugRetriever *historicalbug.HistoricalBugRetriever
+	reflectionRetriever    retrieval.Retriever
+	historicalBugRetriever retrieval.Retriever
 }
 
 func NewDefaultKnowledgeRetriever(
-	reflectionRetriever *reflection.ReflectionRetriever,
-	historicalBugRetriever *historicalbug.HistoricalBugRetriever) *DefaultKnowledgeRetriever {
+	reflectionRetriever retrieval.Retriever,
+	historicalBugRetriever retrieval.Retriever) *DefaultKnowledgeRetriever {
 	return &DefaultKnowledgeRetriever{
 		reflectionRetriever:    reflectionRetriever,
 		historicalBugRetriever: historicalBugRetriever,

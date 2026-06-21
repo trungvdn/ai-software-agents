@@ -1,9 +1,24 @@
 package developer
 
-import "github.com/trungvdn/ai-software-agents/domain/patchplan"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/trungvdn/ai-software-agents/domain/patchplan"
+	"github.com/trungvdn/ai-software-agents/shared/utils"
+)
 
 func ParsePatchPlan(
 	response string,
 ) (*patchplan.PatchPlan, error) {
-	return &patchplan.PatchPlan{}, nil
+	// Strip markdown code blocks if present (e.g., ```json ... ```)
+	jsonStr := utils.StripCodeFences(response)
+	fmt.Println("LLM Response (after stripping code fences):", jsonStr)
+
+	// Parse the LLM response as JSON
+	var patchPlan patchplan.PatchPlan
+	if err := json.Unmarshal([]byte(jsonStr), &patchPlan); err != nil {
+		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, response)
+	}
+	return &patchPlan, nil
 }
