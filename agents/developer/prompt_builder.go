@@ -89,7 +89,7 @@ func (b *DeveloperPromptBuilder) Build(
 	return prompt.String()
 }
 
-func (b *DeveloperPromptBuilder) BuildPatchPlan(
+func (b *DeveloperPromptBuilder) BuildPatchCandidate(
 	analysis *analysis.Analysis,
 	codeContext *CodeContext) string {
 	/*
@@ -105,16 +105,13 @@ func (b *DeveloperPromptBuilder) BuildPatchPlan(
 				2.File: internal/user/repository.go
 				<content>
 
-				Based on the analysis, provide your response ONLY as a valid JSON array
+				Based on the analysis, provide your response ONLY as a valid JSON array (no markdown, no extra text) with exactly this structure:
 				{
-		  "file_path":"...",
-		  "reason":"...",
-		  "changes":[
-		    "Add nil check after repository call",
-		    "Return ErrUserNotFound"
-		  ]
-		}
-
+					"file_path":"...",
+		  			"reason":"...",
+		  			"original_snippet":"...",
+		  			"proposed_snippet":"..."
+				}
 				Create patch plan fix.
 	*/
 	var prompt strings.Builder
@@ -136,10 +133,8 @@ func (b *DeveloperPromptBuilder) BuildPatchPlan(
 	prompt.WriteString("{\n")
 	prompt.WriteString("  \"file_path\": \"file path to patch\",\n")
 	prompt.WriteString("  \"reason\": \"reason for the patch\",\n")
-	prompt.WriteString("  \"changes\": [\n")
-	prompt.WriteString("    \"Add nil check after repository call\",\n")
-	prompt.WriteString("    \"Return ErrUserNotFound\"\n")
-	prompt.WriteString("  ]\n")
+	prompt.WriteString("  \"original_snippet\": \"original code snippet\",\n")
+	prompt.WriteString("  \"proposed_snippet\": \"proposed code snippet\"\n")
 	prompt.WriteString("}\n\n")
 	prompt.WriteString("Where:\n")
 	prompt.WriteString("- file_path: file path to patch\n")

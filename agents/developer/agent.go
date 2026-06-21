@@ -57,18 +57,18 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	}
 
 	// Step 5: Build patch plan prompt
-	patchPlanPrompt := a.promptBuilder.BuildPatchPlan(
+	patchCandidatePrompt := a.promptBuilder.BuildPatchCandidate(
 		analysis, codeContext,
 	)
 
 	// Step 6: Reasoning build patch plan
-	llmPatchPlanResponse, err := a.llm.Chat(ctx, patchPlanPrompt)
+	llmPatchPlanResponse, err := a.llm.Chat(ctx, patchCandidatePrompt)
 	if err != nil {
 		return nil, err
 	}
 
 	// Step 7: Parse Response PatchPlan
-	patchPlan, err := ParsePatchPlan(llmPatchPlanResponse)
+	patchPlan, err := ParsePatchCadidate(llmPatchPlanResponse)
 	if err != nil {
 		return nil, err
 	}
