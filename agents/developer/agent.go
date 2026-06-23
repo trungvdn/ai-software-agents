@@ -9,6 +9,8 @@ import (
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 )
 
+var ErrFeatureNotImplemented = errors.New("Feature not implemented yet")
+
 type DeveloperAgent struct {
 	knowledgeRetriever KnowledgeRetriever
 	codeRetriever      CodeRetriever
@@ -41,7 +43,7 @@ func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask *developer
 
 	switch developmentTask.Type {
 	case developer.TaskTypeBugFix:
-		response, err := a.ExecuteBugFix(ctx, developmentTask.Description)
+		response, err := a.ExecuteBugFix(ctx, developmentTask)
 		if err != nil {
 			return nil, err
 		}
@@ -63,13 +65,9 @@ func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask *developer
 	}
 }
 
-func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, bugDescription string) (*Response, error) {
-	developmentTask := developer.DevelopmentTask{
-		Type:        developer.TaskTypeBugFix,
-		Description: bugDescription,
-	}
+func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, task *developer.DevelopmentTask) (*Response, error) {
 	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
-	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, developmentTask.Description, 10)
+	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, task.Description, 10)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +76,7 @@ func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, bugDescription strin
 
 	// Step 2: Retrieve relevant code context
 	codeContext, err := a.codeRetriever.Retrieve(&RetrievalQuery{
-		Query: developmentTask.Description,
+		Query: task.Description,
 	})
 	if err != nil {
 		return nil, err
@@ -87,7 +85,7 @@ func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, bugDescription strin
 	log.Printf("Retrieved %d relevant source files for the bug description", len(codeContext.Files))
 
 	// Step 3: Build developer prompt
-	prompt := a.promptBuilder.Build(developmentTask.Description, knowledgeContext, codeContext)
+	prompt := a.promptBuilder.Build(task.Description, knowledgeContext, codeContext)
 
 	log.Printf("Constructed prompt for LLM:\n%s", prompt)
 
@@ -157,7 +155,7 @@ func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, bugDescription stri
 		Type:        developer.TaskTypeFeature,
 		Description: bugDescription,
 	}
-	return &Response{}, nil
+	return nil, ErrFeatureNotImplemented
 }
 
 func (a *DeveloperAgent) ExecuteTest(ctx context.Context, bugDescription string) (*Response, error) {
@@ -165,5 +163,5 @@ func (a *DeveloperAgent) ExecuteTest(ctx context.Context, bugDescription string)
 		Type:        developer.TaskTypeTest,
 		Description: bugDescription,
 	}
-	return &Response{}, nil
+	return nil, ErrFeatureNotImplemented
 }

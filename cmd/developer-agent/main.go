@@ -114,23 +114,35 @@ func main() {
 }
 
 func executeFeature(ctx context.Context, agent *developer.DeveloperAgent, featureDescription string) {
-	agent.Execute(ctx, &developer_domain.DevelopmentTask{
+	_, err := agent.Execute(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeFeature,
 		Description: featureDescription,
 	})
+	if err != nil {
+		log.Printf("Error executing feature: %v", err)
+		return
+	}
 }
 
 func executeBug(ctx context.Context, agent *developer.DeveloperAgent, bugDescription string) {
-	agent.Execute(ctx, &developer_domain.DevelopmentTask{
+	_, err := agent.Execute(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeBugFix,
 		Description: bugDescription,
 	})
-
+	if err != nil {
+		log.Printf("Error executing feature: %v", err)
+		return
+	}
 }
 
 func executeTest(ctx context.Context, agent *developer.DeveloperAgent, testDescription string) {
-	agent.Execute(ctx, &developer_domain.DevelopmentTask{
+	_, err := agent.Execute(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeTest,
 		Description: testDescription,
 	})
+
+	if err != nil {
+		log.Printf("Error executing feature: %v", err)
+		return
+	}
 }
