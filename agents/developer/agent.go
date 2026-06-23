@@ -23,6 +23,7 @@ type DeveloperAgent struct {
 }
 
 func NewDeveloperAgent(
+	requirementAnalyzer RequirementAnalyzer,
 	knowledgeRetriever KnowledgeRetriever,
 	codeRetriever CodeRetriever,
 	prompt *DeveloperPromptBuilder,
@@ -31,15 +32,27 @@ func NewDeveloperAgent(
 	llm llm.Client,
 ) *DeveloperAgent {
 	return &DeveloperAgent{
-		knowledgeRetriever: knowledgeRetriever,
-		codeRetriever:      codeRetriever,
-		promptBuilder:      prompt,
-		diffGenerator:      diffGenerator,
-		patchApplier:       patchApplier,
-		llm:                llm,
+		knowledgeRetriever:  knowledgeRetriever,
+		requirementAnalyzer: requirementAnalyzer,
+		codeRetriever:       codeRetriever,
+		promptBuilder:       prompt,
+		diffGenerator:       diffGenerator,
+		patchApplier:        patchApplier,
+		llm:                 llm,
 	}
 }
 
+func (a *DeveloperAgent) Execute(ctx context.Context, task *developer.DevelopmentTask) (*Response, error) {
+	switch task.Type {
+	case developer.TaskTypeBugFix:
+		return a.ExecuteBugFix(ctx, task)
+	case developer.TaskTypeFeature:
+		return a.ExecuteFeature(ctx, task)
+	case developer.TaskTypeTest:
+		return a.ExecuteTest(ctx, task)
+	}
+	return nil, nil
+}
 func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, task *developer.DevelopmentTask) (*Response, error) {
 	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
 	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, task.Description, 10)
@@ -129,6 +142,7 @@ func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, task *developer.Dev
 	requirementAnalysis, err := a.requirementAnalyzer.Analyze(ctx, task)
 	if err != nil {
 		log.Printf("Error analyzing requirement: %v", err)
+		return nil, err
 	}
 	log.Printf("Requirement Analysis: %+v", requirementAnalysis)
 
@@ -140,6 +154,7 @@ func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, task *developer.Dev
 	log.Printf("Retrieved %d files for the feature description", len(codeContext.Files))
 	if err != nil {
 		log.Printf("Error retrieving code context: %v", err)
+		return nil, err
 	}
 	return &Response{
 		Knowledge:      nil,

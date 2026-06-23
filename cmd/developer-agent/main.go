@@ -92,8 +92,14 @@ func main() {
 		absTestdataPath,
 	)
 
+	requirementAnalyzer := developer.NewDefaultRequirementAnalyzer(
+		ollamaClient,
+		developer.NewRequirementPromptBuilder(),
+	)
+
 	// Developer Agent
 	developerAgent := developer.NewDeveloperAgent(
+		requirementAnalyzer,
 		knowledgeRetriever,
 		codeRetriever,
 		promptBuilder,
@@ -106,15 +112,15 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 
-	developerAgent.ExecuteFeature(ctx, &developer_domain.DevelopmentTask{
+	developerAgent.Execute(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeFeature,
 		Description: "Implement a new feature that allows users to reset their password via email.",
 	})
-	developerAgent.ExecuteBugFix(ctx, &developer_domain.DevelopmentTask{
+	developerAgent.Execute(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeBugFix,
 		Description: "Fix the bug where the application crashes when the user inputs an empty string.",
 	})
-	developerAgent.ExecuteTest(ctx, &developer_domain.DevelopmentTask{
+	developerAgent.Execute(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeTest,
 		Description: "Write a test case to verify that the password reset feature works correctly.",
 	})
