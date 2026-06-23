@@ -10,7 +10,7 @@ import (
 
 type CodeRetriever interface {
 	Retrieve(
-		bug string,
+		query *RetrievalQuery,
 	) (*CodeContext, error)
 }
 
@@ -29,15 +29,30 @@ func NewDefaultCodeRetriever(
 	}
 }
 
+type RetrievalQuery struct {
+	Query            string
+	CandidateSymbols []string
+}
+
 func (r *DefaultCodeRetriever) Retrieve(
-	bug string,
+	query *RetrievalQuery,
 ) (*CodeContext, error) {
 	// Step 0: Extract relevant code symbols based on the bug description
-	targets := extractTargets(bug)
-	log.Printf("CodeRetriever: Extracted targets from bug '%s': %v", bug, targets)
+
+	targets := query.CandidateSymbols
 	if len(targets) == 0 {
-		log.Printf("CodeRetriever: No targets extracted, returning empty context")
-		return &CodeContext{Files: []*tools.FileContent{}}, nil
+		targets = extractTargets(query.Query)
+	}
+	log.Printf(
+		"CodeRetriever: query=%s targets=%v",
+		query.Query,
+		targets,
+	)
+
+	if len(targets) == 0 {
+		return &CodeContext{
+			Files: []*tools.FileContent{},
+		}, nil
 	}
 
 	// Step 1: Use the search symbol tool to find relevant files

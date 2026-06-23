@@ -102,7 +102,9 @@ func TestRetrieve_FindsUserService(t *testing.T) {
 		tools.NewSearchSymbolTool("../../testdata"),
 		tools.NewReadFileTool("../../testdata"),
 	)
-	_, err := retriever.Retrieve(bug)
+	_, err := retriever.Retrieve(&RetrievalQuery{
+		Query: bug,
+	})
 	if err != nil {
 		t.Fatalf("Retrieve returned error: %v", err)
 	}

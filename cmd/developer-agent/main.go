@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/trungvdn/ai-software-agents/agents/developer"
+	developer_domain "github.com/trungvdn/ai-software-agents/domain/developer"
 	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
@@ -105,7 +106,13 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 
-	response, err := developerAgent.Execute(ctx, "Fix nil pointer in UserService")
+	developmentTask := developer_domain.DevelopmentTask{
+		Title:       "Fix nil pointer dereference in UserService when user is not found",
+		Description: "Fix nil pointer dereference in UserService when user is not found",
+		Type:        developer_domain.TaskTypeBugFix,
+	}
+
+	response, err := developerAgent.Execute(ctx, developmentTask)
 	if err != nil {
 		log.Fatalf("Error fixing bug: %v", err)
 	}

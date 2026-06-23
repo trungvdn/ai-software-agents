@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/trungvdn/ai-software-agents/domain/developer"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 )
 
@@ -35,9 +36,9 @@ func NewDeveloperAgent(
 	}
 }
 
-func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, error) {
+func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask developer.DevelopmentTask) (*Response, error) {
 	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
-	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, bug, 10)
+	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, developmentTask.Description, 10)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +46,9 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	log.Printf("Retrieved %d reflections and %d historical bugs for the bug description", len(knowledgeContext.Reflections), len(knowledgeContext.HistoricalBugs))
 
 	// Step 2: Retrieve relevant code context
-	codeContext, err := a.codeRetriever.Retrieve(bug)
+	codeContext, err := a.codeRetriever.Retrieve(&RetrievalQuery{
+		Query: developmentTask.Description,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +56,7 @@ func (a *DeveloperAgent) Execute(ctx context.Context, bug string) (*Response, er
 	log.Printf("Retrieved %d relevant source files for the bug description", len(codeContext.Files))
 
 	// Step 3: Build developer prompt
-	prompt := a.promptBuilder.Build(bug, knowledgeContext, codeContext)
+	prompt := a.promptBuilder.Build(developmentTask.Description, knowledgeContext, codeContext)
 
 	log.Printf("Constructed prompt for LLM:\n%s", prompt)
 
