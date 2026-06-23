@@ -30,8 +30,10 @@ func NewDefaultCodeRetriever(
 }
 
 type RetrievalQuery struct {
-	Query            string
-	CandidateSymbols []string
+	Query             string
+	CandidateSymbols  []string
+	CandidatePackages []string
+	CandidateFiles    []string
 }
 
 func (r *DefaultCodeRetriever) Retrieve(

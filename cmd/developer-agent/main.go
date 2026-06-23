@@ -106,16 +106,31 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 
-	developmentTask := developer_domain.DevelopmentTask{
-		Title:       "Fix nil pointer dereference in UserService when user is not found",
-		Description: "Fix nil pointer dereference in UserService when user is not found",
+	executeFeature(ctx, developerAgent, "Add a new feature to handle user authentication")
+	executeBug(ctx, developerAgent, "Fix nill pointer in UserService")
+	executeTest(ctx, developerAgent, "Add unit tests for UserService")
+
+	// log.Printf("Developer Agent Response: %s", response.Analysis.SuggestedFix)
+}
+
+func executeFeature(ctx context.Context, agent *developer.DeveloperAgent, featureDescription string) {
+	agent.Execute(ctx, &developer_domain.DevelopmentTask{
+		Type:        developer_domain.TaskTypeFeature,
+		Description: featureDescription,
+	})
+}
+
+func executeBug(ctx context.Context, agent *developer.DeveloperAgent, bugDescription string) {
+	agent.Execute(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeBugFix,
-	}
+		Description: bugDescription,
+	})
 
-	response, err := developerAgent.Execute(ctx, developmentTask)
-	if err != nil {
-		log.Fatalf("Error fixing bug: %v", err)
-	}
+}
 
-	log.Printf("Developer Agent Response: %s", response.Analysis.SuggestedFix)
+func executeTest(ctx context.Context, agent *developer.DeveloperAgent, testDescription string) {
+	agent.Execute(ctx, &developer_domain.DevelopmentTask{
+		Type:        developer_domain.TaskTypeTest,
+		Description: testDescription,
+	})
 }

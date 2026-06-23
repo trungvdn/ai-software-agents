@@ -2,6 +2,7 @@ package developer
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/trungvdn/ai-software-agents/domain/developer"
@@ -36,7 +37,37 @@ func NewDeveloperAgent(
 	}
 }
 
-func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask developer.DevelopmentTask) (*Response, error) {
+func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask *developer.DevelopmentTask) (*Response, error) {
+
+	switch developmentTask.Type {
+	case developer.TaskTypeBugFix:
+		response, err := a.ExecuteBugFix(ctx, developmentTask.Description)
+		if err != nil {
+			return nil, err
+		}
+		return response, nil
+	case developer.TaskTypeFeature:
+		response, err := a.ExecuteFeature(ctx, developmentTask.Description)
+		if err != nil {
+			return nil, err
+		}
+		return response, nil
+	case developer.TaskTypeTest:
+		response, err := a.ExecuteTest(ctx, developmentTask.Description)
+		if err != nil {
+			return nil, err
+		}
+		return response, nil
+	default:
+		return nil, errors.New("Unsuppported")
+	}
+}
+
+func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, bugDescription string) (*Response, error) {
+	developmentTask := developer.DevelopmentTask{
+		Type:        developer.TaskTypeBugFix,
+		Description: bugDescription,
+	}
 	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
 	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, developmentTask.Description, 10)
 	if err != nil {
@@ -119,4 +150,20 @@ func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask developer.
 		PatchCandidate: patchCandidate,
 		CodePatches:    codePatches,
 	}, nil
+}
+
+func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, bugDescription string) (*Response, error) {
+	_ = developer.DevelopmentTask{
+		Type:        developer.TaskTypeFeature,
+		Description: bugDescription,
+	}
+	return &Response{}, nil
+}
+
+func (a *DeveloperAgent) ExecuteTest(ctx context.Context, bugDescription string) (*Response, error) {
+	_ = developer.DevelopmentTask{
+		Type:        developer.TaskTypeTest,
+		Description: bugDescription,
+	}
+	return &Response{}, nil
 }

@@ -13,10 +13,3 @@ type DevelopmentTask struct {
 	Title       string
 	Description string
 }
-
-type RequirementAnalysis struct {
-	Goal               string
-	CandidateSymbols   []string
-	TechnicalTasks     []string
-	AcceptanceCriteria []string
-}
