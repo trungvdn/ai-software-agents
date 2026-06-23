@@ -61,7 +61,7 @@ func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask *developer
 		}
 		return response, nil
 	default:
-		return nil, errors.New("Unsuppported")
+		return nil, errors.New("unsupported task type")
 	}
 }
 
@@ -151,17 +151,9 @@ func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, task *developer.Deve
 }
 
 func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, bugDescription string) (*Response, error) {
-	_ = developer.DevelopmentTask{
-		Type:        developer.TaskTypeFeature,
-		Description: bugDescription,
-	}
 	return nil, ErrFeatureNotImplemented
 }
 
 func (a *DeveloperAgent) ExecuteTest(ctx context.Context, bugDescription string) (*Response, error) {
-	_ = developer.DevelopmentTask{
-		Type:        developer.TaskTypeTest,
-		Description: bugDescription,
-	}
 	return nil, ErrFeatureNotImplemented
 }

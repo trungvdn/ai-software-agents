@@ -5,4 +5,5 @@ type RequirementAnalysis struct {
 	CandidateSymbols   []string
 	TechnicalTasks     []string
 	AcceptanceCriteria []string
+	Confidence         float64
 }
