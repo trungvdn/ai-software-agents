@@ -12,11 +12,12 @@ import (
 var ErrFeatureNotImplemented = errors.New("Feature not implemented yet")
 
 type DeveloperAgent struct {
-	knowledgeRetriever KnowledgeRetriever
-	codeRetriever      CodeRetriever
-	promptBuilder      *DeveloperPromptBuilder
-	diffGenerator      DiffGenerator
-	patchApplier       PatchApplier
+	requirementAnalyzer RequirementAnalyzer
+	knowledgeRetriever  KnowledgeRetriever
+	codeRetriever       CodeRetriever
+	promptBuilder       *DeveloperPromptBuilder
+	diffGenerator       DiffGenerator
+	patchApplier        PatchApplier
 
 	llm llm.Client
 }
@@ -36,32 +37,6 @@ func NewDeveloperAgent(
 		diffGenerator:      diffGenerator,
 		patchApplier:       patchApplier,
 		llm:                llm,
-	}
-}
-
-func (a *DeveloperAgent) Execute(ctx context.Context, developmentTask *developer.DevelopmentTask) (*Response, error) {
-
-	switch developmentTask.Type {
-	case developer.TaskTypeBugFix:
-		response, err := a.ExecuteBugFix(ctx, developmentTask)
-		if err != nil {
-			return nil, err
-		}
-		return response, nil
-	case developer.TaskTypeFeature:
-		response, err := a.ExecuteFeature(ctx, developmentTask.Description)
-		if err != nil {
-			return nil, err
-		}
-		return response, nil
-	case developer.TaskTypeTest:
-		response, err := a.ExecuteTest(ctx, developmentTask.Description)
-		if err != nil {
-			return nil, err
-		}
-		return response, nil
-	default:
-		return nil, errors.New("unsupported task type")
 	}
 }
 
@@ -150,10 +125,31 @@ func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, task *developer.Deve
 	}, nil
 }
 
-func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, bugDescription string) (*Response, error) {
-	return nil, ErrFeatureNotImplemented
+func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, task *developer.DevelopmentTask) (*Response, error) {
+	requirementAnalysis, err := a.requirementAnalyzer.Analyze(ctx, task)
+	if err != nil {
+		log.Printf("Error analyzing requirement: %v", err)
+	}
+	log.Printf("Requirement Analysis: %+v", requirementAnalysis)
+
+	retrievalQuery := &RetrievalQuery{
+		Query:            task.Description,
+		CandidateSymbols: requirementAnalysis.CandidateSymbols,
+	}
+	codeContext, err := a.codeRetriever.Retrieve(retrievalQuery)
+	log.Printf("Retrieved %d files for the feature description", len(codeContext.Files))
+	if err != nil {
+		log.Printf("Error retrieving code context: %v", err)
+	}
+	return &Response{
+		Knowledge:      nil,
+		CodeContext:    codeContext,
+		PatchCandidate: nil,
+		CodePatches:    nil,
+	}, nil
+
 }
 
-func (a *DeveloperAgent) ExecuteTest(ctx context.Context, bugDescription string) (*Response, error) {
+func (a *DeveloperAgent) ExecuteTest(ctx context.Context, task *developer.DevelopmentTask) (*Response, error) {
 	return nil, ErrFeatureNotImplemented
 }

@@ -106,67 +106,16 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 
-	requirementPromptBuilder := developer.NewRequirementPromptBuilder()
-	executeFeature(ctx, ollamaClient, requirementPromptBuilder, codeRetriever, "Implement a new feature to allow users to reset their passwords")
-	executeBug(ctx, developerAgent, "Fix nill pointer in UserService")
-	executeTest(ctx, developerAgent, "Add unit tests for UserService")
-
-	// log.Printf("Developer Agent Response: %s", response.Analysis.SuggestedFix)
-}
-
-func executeFeature(ctx context.Context,
-	client llm.Client,
-	requirementPromptBuilder *developer.RequirementPromptBuilder,
-	codeRetriever developer.CodeRetriever,
-	featureDescription string) {
-	task := &developer_domain.DevelopmentTask{
+	developerAgent.ExecuteFeature(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeFeature,
-		Description: featureDescription,
-	}
-	requirementAnalyzer := developer.NewDefaultRequirementAnalyzer(
-		client,
-		requirementPromptBuilder,
-	)
-	requirementAnalysis, err := requirementAnalyzer.Analyze(ctx, task)
-	if err != nil {
-		log.Printf("Error analyzing requirement: %v", err)
-		return
-	}
-	log.Printf("Requirement Analysis: %+v", requirementAnalysis)
-
-	codeContext, err := codeRetriever.Retrieve(&developer.RetrievalQuery{
-		Query: featureDescription,
+		Description: "Implement a new feature that allows users to reset their password via email.",
 	})
-	log.Printf("Retrieved %d files for the feature description", len(codeContext.Files))
-	if err != nil {
-		log.Printf("Error retrieving code context: %v", err)
-		return
-	}
-	// Prompt builder
-	// Implement plan
-
-}
-
-func executeBug(ctx context.Context, agent *developer.DeveloperAgent, bugDescription string) {
-	_, err := agent.Execute(ctx, &developer_domain.DevelopmentTask{
+	developerAgent.ExecuteBugFix(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeBugFix,
-		Description: bugDescription,
+		Description: "Fix the bug where the application crashes when the user inputs an empty string.",
 	})
-	if err != nil {
-		log.Printf("Error executing feature: %v", err)
-		return
-	}
-
-}
-
-func executeTest(ctx context.Context, agent *developer.DeveloperAgent, testDescription string) {
-	_, err := agent.Execute(ctx, &developer_domain.DevelopmentTask{
+	developerAgent.ExecuteTest(ctx, &developer_domain.DevelopmentTask{
 		Type:        developer_domain.TaskTypeTest,
-		Description: testDescription,
+		Description: "Write a test case to verify that the password reset feature works correctly.",
 	})
-
-	if err != nil {
-		log.Printf("Error executing feature: %v", err)
-		return
-	}
 }
