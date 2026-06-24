@@ -75,20 +75,23 @@ Running Software
 ✅ Historical Bug Retriever.<br>
 ✅ Knowledge Retriever.<br>
 ✅ Knowledge Context.<br>
-✅ Search Symbol Tool.<br>        
-✅ Read File Tool.<br>           
-✅ Code Retrieval.<br>           
-✅ Code Context.<br>            
-✅ Analysis Generation.<br>       
-✅ Patch Candidate.<br>           
-✅ Diff Generator.<br>  
-✅ Patch Applier.<br> 
+✅ Search Symbol Tool.<br>
+✅ Read File Tool.<br>
+✅ Code Retrieval.<br>
+✅ Code Context.<br>
+✅ Analysis Generation.<br>
+✅ Patch Candidate.<br>
+✅ Diff Generator.<br>
+✅ Patch Applier.<br>
 ❌ Feature Development
 
 **Milestone:** Developer Agent can fix bug and apply changes now
 
 ## Phase 3 - BA Agent
-✅ Implemented requirement-generation components for epics, requirements, and stories using LLM-based processing.<br>
+✅ Generate requirements.<br>
+✅ Generate epics.<br>
+✅ Generate story.<br>
+✅ Orchestrator workflow.<br>
 ❌ Publish to Confluence<br>
 ❌ Human in loop
 
