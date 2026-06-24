@@ -18,16 +18,4 @@ type RequirementRepository interface {
 		id string,
 		status Status,
 	) error
-
-	type Repository interface {
-    SaveAggregate(
-        ctx context.Context,
-        aggregate Aggregate,
-    ) error
-
-    GetAggregate(
-        ctx context.Context,
-        id string,
-    ) (*Aggregate, error)
-}
 }

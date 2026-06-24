@@ -15,7 +15,7 @@ type EpicGenerator interface {
 	) (*GenerateEpicResponse, error)
 }
 
-func NewEpicGeneratorUseCase(epicGenerator EpicGenerator) *GenerateEpicUseCase {
+func NewGenerateEpicUseCase(epicGenerator EpicGenerator) *GenerateEpicUseCase {
 	return &GenerateEpicUseCase{
 		epicGenerator: epicGenerator,
 	}
@@ -25,5 +25,5 @@ func (g *GenerateEpicUseCase) Generate(
 	ctx context.Context,
 	request GenerateEpicRequest,
 ) (*GenerateEpicResponse, error) {
-	return g.Generate(ctx, request)
+	return g.epicGenerator.Generate(ctx, request)
 }

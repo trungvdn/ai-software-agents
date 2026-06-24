@@ -25,5 +25,5 @@ func (g *GenerateRequirementUseCase) Generate(
 	ctx context.Context,
 	request GenerateRequirementRequest,
 ) (*GenerateRequirementResponse, error) {
-	return g.Generate(ctx, request)
+	return g.generator.Generate(ctx, request)
 }

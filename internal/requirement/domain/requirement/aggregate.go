@@ -7,7 +7,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/story"
 )
 
-type Aggregate struct {
+type RequirementAggregate struct {
 	Requirement Requirement
 	Epics       []epic.Epic
 	Stories     []story.Story
@@ -16,11 +16,11 @@ type Aggregate struct {
 type AggregateRepository interface {
 	SaveAggregate(
 		ctx context.Context,
-		aggregate Aggregate,
+		aggregate RequirementAggregate,
 	) error
 
 	GetAggregate(
 		ctx context.Context,
 		id string,
-	) (*Aggregate, error)
+	) (*RequirementAggregate, error)
 }
