@@ -7,8 +7,9 @@ import (
 	"log"
 	"strings"
 
-	generate_requirement "github.com/trungvdn/ai-software-agents/internal/requirement/application/generaterequirement"
+	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_requirement"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/requirement"
+	"github.com/trungvdn/ai-software-agents/internal/requirement/infrastructure/llm/dto"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/utils"
 )
@@ -74,11 +75,21 @@ func (o *OllamaRequirementGenerator) Generate(
 	jsonStr := utils.StripCodeFences(llmResponse)
 
 	// Parse the LLM response as JSON
-	var requirement requirement.Requirement
-	if err := json.Unmarshal([]byte(jsonStr), &requirement); err != nil {
+	var response dto.RequirementResponse
+	if err := json.Unmarshal([]byte(jsonStr), &response); err != nil {
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
 	}
+
+	goalDescriptions := make([]requirement.Goal, len(response.Goals))
+	for i, goal := range response.Goals {
+		goalDescriptions[i] = requirement.Goal{Description: goal}
+	}
+	requirementResponse := requirement.Requirement{
+		ProjectName: response.ProjectName,
+		Vision:      response.Vision,
+		Goals:       goalDescriptions,
+	}
 	return &generate_requirement.GenerateRequirementResponse{
-		Requirement: requirement,
+		Requirement: requirementResponse,
 	}, nil
 }

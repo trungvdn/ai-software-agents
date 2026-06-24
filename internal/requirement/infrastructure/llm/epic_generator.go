@@ -7,8 +7,9 @@ import (
 	"log"
 	"strings"
 
-	generate_epic "github.com/trungvdn/ai-software-agents/internal/requirement/application/generateepic"
+	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_epic"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/epic"
+	"github.com/trungvdn/ai-software-agents/internal/requirement/infrastructure/llm/dto"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/utils"
 )
@@ -99,7 +100,7 @@ func (o *OllamaEpicGenerator) Generate(
 	prompt.WriteString("  ]\n")
 	prompt.WriteString("}\n")
 
-	llmResponse, err := o.client.Chat(ctx, "")
+	llmResponse, err := o.client.Chat(ctx, prompt.String())
 	if err != nil {
 		return nil, err
 	}
@@ -107,9 +108,17 @@ func (o *OllamaEpicGenerator) Generate(
 	jsonStr := utils.StripCodeFences(llmResponse)
 
 	// Parse the LLM response as JSON
-	var epics []epic.Epic
-	if err := json.Unmarshal([]byte(jsonStr), &epics); err != nil {
+	var response dto.EpicResponse
+	if err := json.Unmarshal([]byte(jsonStr), &response); err != nil {
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
+	}
+
+	epics := make([]epic.Epic, len(response.Epics))
+	for _, epicItem := range response.Epics {
+		epics = append(epics, epic.Epic{
+			Name:        epicItem.Name,
+			Description: epicItem.Description,
+		})
 	}
 
 	return &generate_epic.GenerateEpicResponse{

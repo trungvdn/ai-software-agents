@@ -7,8 +7,9 @@ import (
 	"log"
 	"strings"
 
-	generate_story "github.com/trungvdn/ai-software-agents/internal/requirement/application/generatestory"
+	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_story"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/story"
+	"github.com/trungvdn/ai-software-agents/internal/requirement/infrastructure/llm/dto"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/utils"
 )
@@ -100,9 +101,9 @@ func (o *OllamaStoryGenerator) Generate(
 	prompt.WriteString("5. Generate between 3 and 10 stories.\n\n")
 	prompt.WriteString("Epic:\n\n")
 	prompt.WriteString("Name:\n")
-	prompt.WriteString(request.Epics.Name)
+	prompt.WriteString(request.Epic.Name)
 	prompt.WriteString("\n\nDescription:\n")
-	prompt.WriteString(request.Epics.Description)
+	prompt.WriteString(request.Epic.Description)
 	prompt.WriteString("\n\nReturn ONLY valid JSON.\n\n")
 	prompt.WriteString("{\n")
 	prompt.WriteString(`  "stories": [` + "\n")
@@ -115,7 +116,7 @@ func (o *OllamaStoryGenerator) Generate(
 	prompt.WriteString("  ]\n")
 	prompt.WriteString("}\n")
 
-	llmResponse, err := o.client.Chat(ctx, "")
+	llmResponse, err := o.client.Chat(ctx, prompt.String())
 	if err != nil {
 		return nil, err
 	}
@@ -123,10 +124,21 @@ func (o *OllamaStoryGenerator) Generate(
 	jsonStr := utils.StripCodeFences(llmResponse)
 
 	// Parse the LLM response as JSON
-	var stories []story.Story
-	if err := json.Unmarshal([]byte(jsonStr), &stories); err != nil {
+	var response dto.StoryResponse
+	if err := json.Unmarshal([]byte(jsonStr), &response); err != nil {
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
 	}
+
+	stories := make([]story.Story, len(response.Stories))
+	for i, storyItem := range response.Stories {
+		stories[i] = story.Story{
+			Title:  storyItem.Title,
+			AsA:    storyItem.AsA,
+			IWant:  storyItem.IWant,
+			SoThat: storyItem.SoThat,
+		}
+	}
+
 	return &generate_story.GenerateStoryResponse{
 		Stories: stories,
 	}, nil
