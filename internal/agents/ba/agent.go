@@ -12,6 +12,16 @@ type BAAgent struct {
 	publishRequirementUseCase         *publish_requirement.PublishRequirementUseCase
 }
 
+func NewBAAgent(
+	generateRequirementPackageUseCase *generate_requirement_package.GenerateRequirementPackageUseCase,
+	publishRequirementUseCase *publish_requirement.PublishRequirementUseCase,
+) *BAAgent {
+	return &BAAgent{
+		generateRequirementPackageUseCase: generateRequirementPackageUseCase,
+		publishRequirementUseCase:         publishRequirementUseCase,
+	}
+}
+
 func (a *BAAgent) Execute(
 	ctx context.Context,
 	request Request,
@@ -25,7 +35,9 @@ func (a *BAAgent) Execute(
 	}
 
 	// Publish the requirement package
-	err = a.publishRequirementUseCase.Publish(ctx, publish_requirement.PublishRequirementRequest{})
+	err = a.publishRequirementUseCase.Publish(ctx, publish_requirement.PublishRequirementRequest{
+		RequirementAggregate: generateRequirementPackageResponse.RequirementAggregate,
+	})
 	if err != nil {
 		return nil, err
 	}
