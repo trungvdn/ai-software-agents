@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/trungvdn/ai-software-agents/domain/analysis"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_knowledge"
 )
 
 type DeveloperPromptBuilder struct {
@@ -16,7 +17,7 @@ func NewDefaultPromptBuilder() *DeveloperPromptBuilder {
 
 func (b *DeveloperPromptBuilder) Build(
 	bugDescription string,
-	knowledge *KnowledgeContext,
+	knowledge *retrieve_knowledge.KnowledgeContextResponse,
 	codeContext *CodeContext,
 ) string {
 	/*

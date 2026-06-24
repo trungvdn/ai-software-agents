@@ -25,22 +25,21 @@ func NewRetrieveReflectionUseCase(
 
 func (r *RetrieveReflectionUseCase) Retrieve(
 	ctx context.Context,
-	query string,
-	topK int,
-) ([]*retrieval.SearchResult, error) {
-	embedding, err := r.embedder.Embed(ctx, query)
+	request ReflectionRequest,
+) (*ReflectionResponse, error) {
+	embedding, err := r.embedder.Embed(ctx, request.Query)
 	if err != nil {
 		return nil, err
 	}
 
-	reflections, err := r.repo.SearchSimilar(ctx, embedding, topK)
+	reflections, err := r.repo.SearchSimilar(ctx, embedding, request.Limit)
 	if err != nil {
 		return nil, err
 	}
 
-	var results []*retrieval.SearchResult
+	var results []retrieval.SearchResult
 	for _, ref := range reflections {
-		results = append(results, &retrieval.SearchResult{
+		results = append(results, retrieval.SearchResult{
 			ID:      ref.Reflection.ID.String(),
 			Content: ref.Reflection.Content,
 			Score:   ref.Similarity,
@@ -52,5 +51,5 @@ func (r *RetrieveReflectionUseCase) Retrieve(
 		})
 	}
 
-	return results, nil
+	return &ReflectionResponse{Reflections: results}, nil
 }

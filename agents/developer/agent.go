@@ -15,7 +15,7 @@ var ErrFeatureNotImplemented = errors.New("Feature not implemented yet")
 
 type DeveloperAgent struct {
 	requirementAnalyzer RequirementAnalyzer
-	knowledgeRetriever  retrieve_knowledge.RetrieveKnowledgeUseCase
+	knowledgeRetriever  *retrieve_knowledge.RetrieveKnowledgeUseCase
 	codeRetriever       CodeRetriever
 	promptBuilder       *DeveloperPromptBuilder
 	diffGenerator       DiffGenerator
@@ -26,7 +26,7 @@ type DeveloperAgent struct {
 
 func NewDeveloperAgent(
 	requirementAnalyzer RequirementAnalyzer,
-	knowledgeRetriever retrieve_knowledge.RetrieveKnowledgeUseCase,
+	knowledgeRetriever *retrieve_knowledge.RetrieveKnowledgeUseCase,
 	codeRetriever CodeRetriever,
 	prompt *DeveloperPromptBuilder,
 	diffGenerator DiffGenerator,
@@ -61,7 +61,10 @@ func (a *DeveloperAgent) Execute(ctx context.Context, task *developer.Developmen
 }
 func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, task *developer.DevelopmentTask) (*Response, error) {
 	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
-	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, task.Description, 10)
+	knowledgeContext, err := a.knowledgeRetriever.Retrieve(ctx, retrieve_knowledge.KnowledgeRequest{
+		Query: task.Description,
+		Limit: 10,
+	})
 	if err != nil {
 		return nil, err
 	}

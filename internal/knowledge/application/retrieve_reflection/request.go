@@ -1,6 +1,6 @@
 package retrieve_reflection
 
-type Request struct {
+type ReflectionRequest struct {
 	Query string
 	Limit int
 }

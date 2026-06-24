@@ -61,7 +61,7 @@ func main() {
 	)
 
 	knowledgeRetriever := retrieve_knowledge.NewRetrieveKnowledgeUseCase(
-		reflectionRetriever, historicalBugRetriever,
+		historicalBugRetriever, reflectionRetriever,
 	)
 
 	ollamaClient, err := llm.NewOllamaClient(llm.OllamaConfig{

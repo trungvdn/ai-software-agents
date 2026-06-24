@@ -1,8 +1,7 @@
-package retrieve_knowledge
+package retrieve_historical_bug
 
 import "github.com/trungvdn/ai-software-agents/shared/retrieval"
 
-type KnowledgeContextResponse struct {
-	Reflections    []retrieval.SearchResult
+type HistoricalBugResponse struct {
 	HistoricalBugs []retrieval.SearchResult
 }
