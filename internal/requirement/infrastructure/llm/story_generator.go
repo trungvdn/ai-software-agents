@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_story"
@@ -120,7 +119,6 @@ func (o *OllamaStoryGenerator) Generate(
 	if err != nil {
 		return nil, err
 	}
-	log.Printf(llmResponse)
 	jsonStr := utils.StripCodeFences(llmResponse)
 
 	// Parse the LLM response as JSON
@@ -129,7 +127,7 @@ func (o *OllamaStoryGenerator) Generate(
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
 	}
 
-	stories := make([]story.Story, len(response.Stories))
+	stories := make([]story.Story, 0, len(response.Stories))
 	for i, storyItem := range response.Stories {
 		stories[i] = story.Story{
 			Title:  storyItem.Title,
