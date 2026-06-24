@@ -1,28 +1,29 @@
-package publishrequirement
+package publish_requirement
 
 import (
 	"context"
-
-	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/requirement"
 )
 
 type Publisher interface {
 	Publish(
 		ctx context.Context,
-		requirement requirement.Requirement,
+		request PublishRequirementRequest,
 	) error
 }
 
 type PublishRequirementUseCase struct {
+	publisher Publisher
 }
 
-func NewPublishRequirementUseCase() *PublishRequirementUseCase {
-	return &PublishRequirementUseCase{}
+func NewPublishRequirementUseCase(publisher Publisher) *PublishRequirementUseCase {
+	return &PublishRequirementUseCase{
+		publisher: publisher,
+	}
 }
 
 func (p *PublishRequirementUseCase) Publish(
 	ctx context.Context,
-	requirement requirement.Requirement,
+	request PublishRequirementRequest,
 ) error {
-	return nil
+	return p.publisher.Publish(ctx, request)
 }
