@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_requirement"
@@ -65,7 +66,7 @@ func (o *OllamaRequirementGenerator) Generate(
 	prompt.WriteString(`    "..."` + "\n")
 	prompt.WriteString("  ]\n")
 	prompt.WriteString("}\n")
-
+	log.Printf("OllamaRequirementGenerator prompt: %s", prompt.String())
 	llmResponse, err := o.client.Chat(ctx, prompt.String())
 	if err != nil {
 		return nil, err
@@ -77,6 +78,7 @@ func (o *OllamaRequirementGenerator) Generate(
 	if err := json.Unmarshal([]byte(jsonStr), &response); err != nil {
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
 	}
+	log.Printf("OllamaRequirementGenerator response: %+v", response)
 
 	goalDescriptions := make([]requirement.Goal, len(response.Goals))
 	for i, goal := range response.Goals {

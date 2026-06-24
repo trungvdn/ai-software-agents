@@ -4,13 +4,6 @@ import (
 	"context"
 )
 
-type RequirementGenerator interface {
-	Generate(
-		ctx context.Context,
-		request GenerateRequirementRequest,
-	) (*GenerateRequirementResponse, error)
-}
-
 type GenerateRequirementUseCase struct {
 	generator RequirementGenerator
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_epic"
@@ -110,6 +111,8 @@ func (o *OllamaEpicGenerator) Generate(
 	if err := json.Unmarshal([]byte(jsonStr), &response); err != nil {
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
 	}
+
+	log.Printf("OllamaEpicGenerator response: %+v", response)
 
 	epics := make([]epic.Epic, 0, len(response.Epics))
 	for _, epicItem := range response.Epics {
