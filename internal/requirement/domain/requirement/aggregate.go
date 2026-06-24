@@ -13,7 +13,7 @@ type RequirementAggregate struct {
 	Stories     []story.Story
 }
 
-type AggregateRepository interface {
+type RequirementAggregateRepository interface {
 	SaveAggregate(
 		ctx context.Context,
 		aggregate RequirementAggregate,

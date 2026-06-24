@@ -4,10 +4,6 @@ import (
 	"context"
 )
 
-type GenerateEpicUseCase struct {
-	epicGenerator EpicGenerator
-}
-
 type EpicGenerator interface {
 	Generate(
 		ctx context.Context,

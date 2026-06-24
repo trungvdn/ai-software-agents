@@ -2,17 +2,11 @@ package generate_story
 
 import "context"
 
-type StoryGenerator interface {
-	Generate(
-		ctx context.Context,
-		request GenerateStoryRequest,
-	) (*GenerateStoryResponse, error)
-}
 type GenerateStoryUseCase struct {
 	storyGenerator StoryGenerator
 }
 
-func NewGenerateStoryUseCaseUseCase(storyGenerator StoryGenerator) *GenerateStoryUseCase {
+func NewGenerateStoryUseCase(storyGenerator StoryGenerator) *GenerateStoryUseCase {
 	return &GenerateStoryUseCase{
 		storyGenerator: storyGenerator,
 	}
