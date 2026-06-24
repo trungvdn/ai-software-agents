@@ -24,3 +24,11 @@ type RequirementAggregateRepository interface {
 		id string,
 	) (*RequirementAggregate, error)
 }
+
+func NewRequirementAggregate(requirement Requirement, epics []epic.Epic, stories []story.Story) RequirementAggregate {
+	return RequirementAggregate{
+		Requirement: requirement,
+		Epics:       epics,
+		Stories:     stories,
+	}
+}

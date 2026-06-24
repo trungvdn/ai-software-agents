@@ -20,7 +20,13 @@ func NewGenerateRequirementPackageUseCase(
 	generateRequirementUseCase *generate_requirement.GenerateRequirementUseCase,
 	generateEpicUseCase *generate_epic.GenerateEpicUseCase,
 	generateStoryUseCase *generate_story.GenerateStoryUseCase,
-) *GenerateRequirementPackageUseCase
+) *GenerateRequirementPackageUseCase {
+	return &GenerateRequirementPackageUseCase{
+		generateRequirementUseCase: generateRequirementUseCase,
+		generateEpicUseCase:        generateEpicUseCase,
+		generateStoryUseCase:       generateStoryUseCase,
+	}
+}
 
 func (u *GenerateRequirementPackageUseCase) Execute(
 	ctx context.Context,
@@ -45,12 +51,7 @@ func (u *GenerateRequirementPackageUseCase) Execute(
 		allStories = append(allStories, storyResp.Stories...)
 	}
 
-	aggregate :=
-		requirement.RequirementAggregate{
-			Requirement: requirementResp.Requirement,
-			Epics:       epicResp.Epics,
-			Stories:     allStories,
-		}
+	aggregate := requirement.NewRequirementAggregate(requirementResp.Requirement, epicResp.Epics, allStories)
 
 	return &GenerateRequirementPackageResponse{
 		RequirementAggregate: aggregate,
