@@ -1,4 +1,4 @@
-package historicalbug
+package retrieve_historical_bug
 
 import (
 	"context"
@@ -15,7 +15,7 @@ type RetrieveHistoricalBugUseCase struct {
 	embedder embedding.Embedder
 }
 
-func NewHistoricalBugRetriever(
+func NewRetrieveHistoricalBugUseCase(
 	repo historicalbug.HistoricalBugRepository,
 	embedder embedding.Embedder,
 ) *RetrieveHistoricalBugUseCase {

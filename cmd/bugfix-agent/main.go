@@ -9,15 +9,15 @@ import (
 	"github.com/trungvdn/ai-software-agents/agents/coder"
 	"github.com/trungvdn/ai-software-agents/agents/planner"
 	"github.com/trungvdn/ai-software-agents/domain/codebase"
-	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
-	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_historical_bug"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_reflection"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/infrastructure"
 	prompt_context "github.com/trungvdn/ai-software-agents/shared/context"
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/retrieval"
-	"github.com/trungvdn/ai-software-agents/storage/repositories"
 )
 
 func main() {
@@ -42,23 +42,23 @@ func main() {
 	defer db.Close()
 
 	// Create repository
-	reflectionRepo := repositories.NewReflectionRepository(db)
+	reflectionRepo := infrastructure.NewReflectionRepository(db)
 
-	historicalBugRepo := repositories.NewHistoricalBugRepository(db)
+	historicalBugRepo := infrastructure.NewHistoricalBugRepository(db)
 
-	codeBaseRepo := repositories.NewCodeBaseRepository(db)
+	codeBaseRepo := infrastructure.NewCodeBaseRepository(db)
 
 	// Create embedder
 	embedder := embedding.NewOllamaEmbedder(cfg.OllamaBaseURL, cfg.OllamaModel)
 
 	// Reflection retrievers
-	reflectionRetriever := reflection.NewReflectionRetriever(
+	reflectionRetriever := retrieve_reflection.NewRetrieveReflectionUseCase(
 		reflectionRepo,
 		embedder,
 	)
 
 	// Historical bug retrievers
-	historicalBugRetriever := historicalbug.NewHistoricalBugRetriever(
+	historicalBugRetriever := retrieve_historical_bug.NewRetrieveHistoricalBugUseCase(
 		historicalBugRepo,
 		embedder,
 	)

@@ -8,14 +8,15 @@ import (
 
 	"github.com/trungvdn/ai-software-agents/agents/developer"
 	developer_domain "github.com/trungvdn/ai-software-agents/domain/developer"
-	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
-	"github.com/trungvdn/ai-software-agents/internal/knowledge/domain/historicalbug"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_historical_bug"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_reflection"
+
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/infrastructure"
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/tools"
-	"github.com/trungvdn/ai-software-agents/storage/repositories"
 )
 
 func main() {
@@ -39,21 +40,21 @@ func main() {
 	defer db.Close()
 
 	// Create repository
-	reflectionRepo := repositories.NewReflectionRepository(db)
+	reflectionRepo := infrastructure.NewReflectionRepository(db)
 
-	historicalBugRepo := repositories.NewHistoricalBugRepository(db)
+	historicalBugRepo := infrastructure.NewHistoricalBugRepository(db)
 
 	// Create embedder
 	embedder := embedding.NewOllamaEmbedder(cfg.OllamaBaseURL, cfg.OllamaModel)
 
 	// Reflection retrievers
-	reflectionRetriever := reflection.NewReflectionRetriever(
+	reflectionRetriever := retrieve_reflection.NewRetrieveReflectionUseCase(
 		reflectionRepo,
 		embedder,
 	)
 
 	// Historical bug retrievers
-	historicalBugRetriever := historicalbug.NewHistoricalBugRetriever(
+	historicalBugRetriever := retrieve_historical_bug.NewRetrieveHistoricalBugUseCase(
 		historicalBugRepo,
 		embedder,
 	)

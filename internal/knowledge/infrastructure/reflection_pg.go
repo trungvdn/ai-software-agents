@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/trungvdn/ai-software-agents/domain/reflection"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/shared/utils"
 )
 

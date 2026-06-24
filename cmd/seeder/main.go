@@ -13,14 +13,15 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/trungvdn/ai-software-agents/domain/codebase"
-	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
-	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_reflection"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/domain/historicalbug"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/domain/reflection"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/infrastructure"
 	ai_context "github.com/trungvdn/ai-software-agents/shared/context"
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
 	"github.com/trungvdn/ai-software-agents/shared/retrieval"
-	"github.com/trungvdn/ai-software-agents/storage/repositories"
 )
 
 type SampleReflection struct {
@@ -63,7 +64,7 @@ func main() {
 
 	// retrieveHistoricalBug(context.Background(), repositories.NewHistoricalBugRepository(db), embedder)
 
-	indexFolder(context.Background(), "./testdata", repositories.NewCodeBaseRepository(db), embedder)
+	indexFolder(context.Background(), "./testdata", infrastructure.NewCodeBaseRepository(db), embedder)
 
 }
 
@@ -110,7 +111,7 @@ func embedAndSaveReflection(ctx context.Context, repo reflection.ReflectionRepos
 
 func retrieveReflection(ctx context.Context, repo reflection.ReflectionRepository, embedder embedding.Embedder) {
 
-	retriever := reflection.NewReflectionRetriever(
+	retriever := retrieve_reflection.NewRetrieveReflectionUseCase(
 		repo,
 		embedder,
 	)
