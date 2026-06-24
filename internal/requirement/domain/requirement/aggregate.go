@@ -25,8 +25,8 @@ type RequirementAggregateRepository interface {
 	) (*RequirementAggregate, error)
 }
 
-func NewRequirementAggregate(requirement Requirement, epics []epic.Epic, stories []story.Story) RequirementAggregate {
-	return RequirementAggregate{
+func NewRequirementAggregate(requirement Requirement, epics []epic.Epic, stories []story.Story) *RequirementAggregate {
+	return &RequirementAggregate{
 		Requirement: requirement,
 		Epics:       epics,
 		Stories:     stories,

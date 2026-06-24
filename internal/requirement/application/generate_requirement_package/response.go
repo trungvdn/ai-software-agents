@@ -5,5 +5,5 @@ import (
 )
 
 type GenerateRequirementPackageResponse struct {
-	RequirementAggregate requirement.RequirementAggregate
+	RequirementAggregate *requirement.RequirementAggregate
 }
