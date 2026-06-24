@@ -89,8 +89,8 @@ Running Software
 
 ## Phase 3 - BA Agent
 ✅ Implemented requirement-generation components for epics, requirements, and stories using LLM-based processing.
-    Publish to Confluence
-    Human in loop
+❌ Publish to Confluence
+❌ Human in loop
 
 **Milestone:** BA Agent can create requirement, epics, story
 
