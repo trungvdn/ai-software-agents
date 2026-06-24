@@ -1,3 +1,7 @@
 package retrieve_reflection
 
-type Response struct{}
+import "github.com/trungvdn/ai-software-agents/shared/retrieval"
+
+type Response struct {
+	Reflections []retrieval.SearchResult
+}

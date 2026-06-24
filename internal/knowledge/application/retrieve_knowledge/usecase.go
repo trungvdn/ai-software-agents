@@ -3,18 +3,33 @@ package retrieve_knowledge
 import (
 	"context"
 
-	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_historical_bug"
-	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_reflection"
+	"github.com/trungvdn/ai-software-agents/shared/retrieval"
 )
 
+type ReflectionRetriever interface {
+	Retrieve(
+		ctx context.Context,
+		query string,
+		topK int,
+	) ([]*retrieval.SearchResult, error)
+}
+
+type HistoricalBugRetriever interface {
+	Retrieve(
+		ctx context.Context,
+		query string,
+		topK int,
+	) ([]*retrieval.SearchResult, error)
+}
+
 type RetrieveKnowledgeUseCase struct {
-	retrieveHistoricalBugUseCase retrieve_historical_bug.RetrieveHistoricalBugUseCase
-	retrieveReflectionUseCase    retrieve_reflection.RetrieveReflectionUseCase
+	retrieveHistoricalBugUseCase HistoricalBugRetriever
+	retrieveReflectionUseCase    ReflectionRetriever
 }
 
 func NewRetrieveKnowledgeUseCase(
-	retrievehistoricalbug retrieve_historical_bug.RetrieveHistoricalBugUseCase,
-	retrievereflection retrieve_reflection.RetrieveReflectionUseCase,
+	retrievehistoricalbug HistoricalBugRetriever,
+	retrievereflection ReflectionRetriever,
 ) *RetrieveKnowledgeUseCase {
 	return &RetrieveKnowledgeUseCase{
 		retrieveHistoricalBugUseCase: retrievehistoricalbug,
@@ -26,7 +41,7 @@ func (r *RetrieveKnowledgeUseCase) Retrieve(
 	ctx context.Context,
 	query string,
 	limit int,
-) (*KnowledgeContext, error) {
+) (*Response, error) {
 	reflections, err := r.retrieveReflectionUseCase.Retrieve(ctx, query, limit)
 	if err != nil {
 		return nil, err
@@ -36,7 +51,7 @@ func (r *RetrieveKnowledgeUseCase) Retrieve(
 		return nil, err
 	}
 
-	return &KnowledgeContext{
+	return &Response{
 		Reflections:    reflections,
 		HistoricalBugs: historicalBugs,
 	}, nil

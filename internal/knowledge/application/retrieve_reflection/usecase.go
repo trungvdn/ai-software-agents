@@ -27,7 +27,7 @@ func (r *RetrieveReflectionUseCase) Retrieve(
 	ctx context.Context,
 	query string,
 	topK int,
-) ([]retrieval.SearchResult, error) {
+) ([]*retrieval.SearchResult, error) {
 	embedding, err := r.embedder.Embed(ctx, query)
 	if err != nil {
 		return nil, err
@@ -38,9 +38,9 @@ func (r *RetrieveReflectionUseCase) Retrieve(
 		return nil, err
 	}
 
-	var results []retrieval.SearchResult
+	var results []*retrieval.SearchResult
 	for _, ref := range reflections {
-		results = append(results, retrieval.SearchResult{
+		results = append(results, &retrieval.SearchResult{
 			ID:      ref.Reflection.ID.String(),
 			Content: ref.Reflection.Content,
 			Score:   ref.Similarity,

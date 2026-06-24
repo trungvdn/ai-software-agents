@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/trungvdn/ai-software-agents/domain/developer"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_knowledge"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 )
 
@@ -14,7 +15,7 @@ var ErrFeatureNotImplemented = errors.New("Feature not implemented yet")
 
 type DeveloperAgent struct {
 	requirementAnalyzer RequirementAnalyzer
-	knowledgeRetriever  KnowledgeRetriever
+	knowledgeRetriever  retrieve_knowledge.RetrieveKnowledgeUseCase
 	codeRetriever       CodeRetriever
 	promptBuilder       *DeveloperPromptBuilder
 	diffGenerator       DiffGenerator
@@ -25,7 +26,7 @@ type DeveloperAgent struct {
 
 func NewDeveloperAgent(
 	requirementAnalyzer RequirementAnalyzer,
-	knowledgeRetriever KnowledgeRetriever,
+	knowledgeRetriever retrieve_knowledge.RetrieveKnowledgeUseCase,
 	codeRetriever CodeRetriever,
 	prompt *DeveloperPromptBuilder,
 	diffGenerator DiffGenerator,

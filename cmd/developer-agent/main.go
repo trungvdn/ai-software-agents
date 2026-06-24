@@ -11,6 +11,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
 	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_historical_bug"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_knowledge"
 	"github.com/trungvdn/ai-software-agents/internal/knowledge/application/retrieve_reflection"
 
 	"github.com/trungvdn/ai-software-agents/internal/knowledge/infrastructure"
@@ -59,9 +60,8 @@ func main() {
 		embedder,
 	)
 
-	knowledgeRetriever := developer.NewDefaultKnowledgeRetriever(
-		reflectionRetriever,
-		historicalBugRetriever,
+	knowledgeRetriever := retrieve_knowledge.NewRetrieveKnowledgeUseCase(
+		reflectionRetriever, historicalBugRetriever,
 	)
 
 	ollamaClient, err := llm.NewOllamaClient(llm.OllamaConfig{
