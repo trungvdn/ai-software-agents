@@ -27,8 +27,8 @@ type RetrieveKnowledgeUseCase struct {
 }
 
 func NewRetrieveKnowledgeUseCase(
-	retrievehistoricalbug HistoricalBugRetriever,
 	retrievereflection ReflectionRetriever,
+	retrievehistoricalbug HistoricalBugRetriever,
 ) *RetrieveKnowledgeUseCase {
 	return &RetrieveKnowledgeUseCase{
 		retrieveHistoricalBugUseCase: retrievehistoricalbug,
