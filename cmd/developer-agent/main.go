@@ -8,10 +8,10 @@ import (
 
 	"github.com/trungvdn/ai-software-agents/agents/developer"
 	developer_domain "github.com/trungvdn/ai-software-agents/domain/developer"
-	"github.com/trungvdn/ai-software-agents/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/domain/reflection"
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
+	"github.com/trungvdn/ai-software-agents/internal/knowledge/domain/historicalbug"
 	"github.com/trungvdn/ai-software-agents/shared/embedding"
 	"github.com/trungvdn/ai-software-agents/shared/llm"
 	"github.com/trungvdn/ai-software-agents/shared/tools"

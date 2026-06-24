@@ -3,6 +3,7 @@ package developer
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/trungvdn/ai-software-agents/domain/developer"
@@ -51,7 +52,11 @@ func (a *DeveloperAgent) Execute(ctx context.Context, task *developer.Developmen
 	case developer.TaskTypeTest:
 		return a.ExecuteTest(ctx, task)
 	}
-	return nil, nil
+	return nil,
+		fmt.Errorf(
+			"unsupported task type: %s",
+			task.Type,
+		)
 }
 func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, task *developer.DevelopmentTask) (*Response, error) {
 	// Step 1: Retrieve knowledge context (reflections, historical bugs) from the knowledge base
@@ -69,7 +74,6 @@ func (a *DeveloperAgent) ExecuteBugFix(ctx context.Context, task *developer.Deve
 	if err != nil {
 		return nil, err
 	}
-
 	log.Printf("Retrieved %d relevant source files for the bug description", len(codeContext.Files))
 
 	// Step 3: Build developer prompt
@@ -151,11 +155,10 @@ func (a *DeveloperAgent) ExecuteFeature(ctx context.Context, task *developer.Dev
 		CandidateSymbols: requirementAnalysis.CandidateSymbols,
 	}
 	codeContext, err := a.codeRetriever.Retrieve(retrievalQuery)
-	log.Printf("Retrieved %d files for the feature description", len(codeContext.Files))
 	if err != nil {
-		log.Printf("Error retrieving code context: %v", err)
 		return nil, err
 	}
+	log.Printf("Retrieved %d files for the feature description", len(codeContext.Files))
 	return &Response{
 		Knowledge:      nil,
 		CodeContext:    codeContext,
