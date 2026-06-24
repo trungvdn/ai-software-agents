@@ -127,7 +127,7 @@ func (o *OllamaStoryGenerator) Generate(
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
 	}
 
-	stories := make([]story.Story, 0, len(response.Stories))
+	stories := make([]story.Story, len(response.Stories))
 	for i, storyItem := range response.Stories {
 		stories[i] = story.Story{
 			Title:  storyItem.Title,

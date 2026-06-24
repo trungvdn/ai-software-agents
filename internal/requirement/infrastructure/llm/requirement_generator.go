@@ -78,7 +78,7 @@ func (o *OllamaRequirementGenerator) Generate(
 		return nil, fmt.Errorf("failed to parse LLM response as JSON: %w, response: %s", err, llmResponse)
 	}
 
-	goalDescriptions := make([]requirement.Goal, 0, len(response.Goals))
+	goalDescriptions := make([]requirement.Goal, len(response.Goals))
 	for i, goal := range response.Goals {
 		goalDescriptions[i] = requirement.Goal{Description: goal}
 	}
