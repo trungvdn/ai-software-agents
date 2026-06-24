@@ -63,33 +63,33 @@ Running Software
 # Roadmap
 
 ## Phase 1 - Foundation
-✅ Reflection Memory  
-✅ Historical Bug Memory 
-✅ Knowledge Retrieval 
-✅ Context Builder
-✅ Prompt Builder  
+✅ Reflection Memory.<br>
+✅ Historical Bug Memory.<br> 
+✅ Knowledge Retrieval.<br> 
+✅ Context Builder.<br>
+✅ Prompt Builder.<br>  
 
 ## Phase 2 - Developer Agent v1
 
-✅ Reflection Retriever
-✅ Historical Bug Retriever
-✅ Knowledge Retriever
-✅ Knowledge Context
-✅ Search Symbol Tool        
-✅ Read File Tool           
-✅ Code Retrieval           
-✅ Code Context            
-✅ Analysis Generation       
-✅ Patch Candidate           
-✅ Diff Generator  
-✅ Patch Applier 
-    Feature Development
+✅ Reflection Retriever.<br>
+✅ Historical Bug Retriever.<br>
+✅ Knowledge Retriever.<br>
+✅ Knowledge Context.<br>
+✅ Search Symbol Tool.<br>        
+✅ Read File Tool.<br>           
+✅ Code Retrieval.<br>           
+✅ Code Context.<br>            
+✅ Analysis Generation.<br>       
+✅ Patch Candidate.<br>           
+✅ Diff Generator.<br>  
+✅ Patch Applier.<br> 
+❌ Feature Development
 
 **Milestone:** Developer Agent can fix bug and apply changes now
 
 ## Phase 3 - BA Agent
-✅ Implemented requirement-generation components for epics, requirements, and stories using LLM-based processing.
-❌ Publish to Confluence
+✅ Implemented requirement-generation components for epics, requirements, and stories using LLM-based processing.<br>
+❌ Publish to Confluence<br>
 ❌ Human in loop
 
 **Milestone:** BA Agent can create requirement, epics, story
