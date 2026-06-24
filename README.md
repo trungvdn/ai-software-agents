@@ -87,9 +87,13 @@ Running Software
 
 **Milestone:** Developer Agent can fix bug and apply changes now
 
-## Phase 3 - Learning System
+## Phase 3 - BA Agent
+- Added and refined the BA agent flow so the system can coordinate higher-level requirement handling more cleanly.
+- Implemented requirement-generation components for epics, requirements, and stories using LLM-based processing.
 
-## Phase 4 - Developer Agent v2
+**Milestone:** BA Agent can create requirement, epics, story
+
+## Phase 4 - Planner Agent
 
 ## Phase 5 - BA Agent and Scheduler Agent
 
