@@ -6,11 +6,11 @@ import (
 )
 
 func MapResponseToPage(
-	page domain.Page,
-) mcp.CreatePageResponse {
-	return mcp.CreatePageResponse{
-		ID:      page.ID,
-		Version: page.Version,
-		URL:     page.URL,
+	response mcp.CreatePageResponse,
+) domain.Page {
+	return domain.Page{
+		ID:      response.ID,
+		URL:     response.URL,
+		Version: response.Version,
 	}
 }
