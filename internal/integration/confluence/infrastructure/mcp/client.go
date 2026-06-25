@@ -11,10 +11,14 @@ import (
 
 type MCPConfluenceClient struct {
 	mcpClient mcp.Client
+	timeout   time.Duration
 }
 
-func NewMCPConfluenceClient() *MCPConfluenceClient {
-	return &MCPConfluenceClient{}
+func NewMCPConfluenceClient(client mcp.Client, timeout time.Duration) *MCPConfluenceClient {
+	return &MCPConfluenceClient{
+		mcpClient: client,
+		timeout:   timeout,
+	}
 }
 
 func (c *MCPConfluenceClient) CreatePage(
@@ -24,7 +28,7 @@ func (c *MCPConfluenceClient) CreatePage(
 	// Implement the logic to create a page in Confluence using the MCP client
 	// You can use the request parameter to get the necessary information for creating the page
 	// For example, you might need to call c.client.CreatePage(...) with the appropriate parameters
-	req := MapPageToCreateRequest(page)
+	req := mapPageToCreateRequest(page)
 	resp, err := c.mcpClient.Call(
 		ctx,
 		mcp.Request{
@@ -42,7 +46,7 @@ func (c *MCPConfluenceClient) CreatePage(
 	if !ok {
 		return nil, errors.New("unexpected response type")
 	}
-	result := MapResponseToPage(createResp)
+	result := mapResponseToPage(createResp)
 	result.Title = page.Title
 	result.Content = page.Content
 	result.ParentID = page.ParentID

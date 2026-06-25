@@ -4,7 +4,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
 )
 
-func MapResponseToPage(
+func mapResponseToPage(
 	response CreatePageResponse,
 ) domain.Page {
 	return domain.Page{

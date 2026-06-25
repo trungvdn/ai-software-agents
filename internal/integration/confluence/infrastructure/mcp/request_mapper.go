@@ -4,7 +4,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
 )
 
-func MapPageToCreateRequest(
+func mapPageToCreateRequest(
 	page domain.Page,
 ) CreatePageRequest {
 	return CreatePageRequest{
