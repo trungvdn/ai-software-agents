@@ -11,3 +11,12 @@ const (
 
 	ToolGitHubCreatePR Tool = "github_create_pr"
 )
+
+type ToolInfo struct {
+	Name        Tool
+	Description string
+}
+
+func (t Tool) String() string {
+	return string(t)
+}

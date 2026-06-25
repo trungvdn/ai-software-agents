@@ -6,11 +6,11 @@ import (
 )
 
 type Session interface {
-	ListTools(ctx context.Context) ([]Tool, error)
+	ListTools(ctx context.Context) ([]ToolInfo, error)
 
 	CallTool(
 		ctx context.Context,
-		tool string,
+		tool Tool,
 		args any,
 	) (json.RawMessage, error)
 
