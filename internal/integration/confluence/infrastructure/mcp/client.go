@@ -9,14 +9,14 @@ import (
 )
 
 type MCPConfluenceClient struct {
-	mcpClient mcp.Client
-	timeout   time.Duration
+	client  *mcp.MCPClient
+	timeout time.Duration
 }
 
-func NewMCPConfluenceClient(client mcp.Client, timeout time.Duration) *MCPConfluenceClient {
+func NewMCPConfluenceClient(client *mcp.MCPClient, timeout time.Duration) *MCPConfluenceClient {
 	return &MCPConfluenceClient{
-		mcpClient: client,
-		timeout:   timeout,
+		client:  client,
+		timeout: timeout,
 	}
 }
 
@@ -28,7 +28,7 @@ func (c *MCPConfluenceClient) CreatePage(
 	// You can use the request parameter to get the necessary information for creating the page
 	// For example, you might need to call c.client.CreatePage(...) with the appropriate parameters
 	req := mapPageToCreateRequest(page)
-	resp, err := c.mcpClient.Call(
+	resp, err := c.client.Call(
 		ctx,
 		mcp.Request{
 			Tool:      mcp.ToolConfluenceCreatePage,
