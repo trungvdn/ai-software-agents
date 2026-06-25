@@ -44,17 +44,17 @@ func (u *GenerateRequirementPackageUseCase) Execute(
 	if err != nil {
 		return nil, err
 	}
-	allStories := make([]story.Story, 0)
 	group, ctx := errgroup.WithContext(ctx)
-	results := make(map[string][]story.Story, len(epicResp.Epics))
-	for _, epic := range epicResp.Epics {
+	results := make([][]story.Story, len(epicResp.Epics))
+	for i, epic := range epicResp.Epics {
+		idx := i
 		epicItem := epic
 		group.Go(func() error {
 			storyResp, err := u.generateStoryUseCase.Generate(ctx, generate_story.GenerateStoryRequest{Epic: epicItem})
 			if err != nil {
 				return err
 			}
-			results[epicItem.ID] = append(results[epicItem.ID], storyResp.Stories...)
+			results[idx] = storyResp.Stories
 			return nil
 		})
 	}
@@ -62,19 +62,13 @@ func (u *GenerateRequirementPackageUseCase) Execute(
 	if err := group.Wait(); err != nil {
 		return nil, err
 	}
-	for _, stories := range results {
-		allStories = append(allStories, stories...)
-	}
 
 	epicAggregates := make([]requirement.EpicAggregate, 0, len(epicResp.Epics))
-	for _, epic := range epicResp.Epics {
-		result, exist := results[epic.ID]
-		if !exist {
-			result = []story.Story{}
-		}
+	for idx, epic := range epicResp.Epics {
+
 		epicAggregates = append(epicAggregates, requirement.EpicAggregate{
 			Epic:    epic,
-			Stories: result,
+			Stories: results[idx],
 		})
 	}
 
