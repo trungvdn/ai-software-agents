@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"os/exec"
 
 	mcpSDK "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -18,7 +19,7 @@ func NewSessionFactory(cfg Config) *SessionFactory {
 }
 
 func (f *SessionFactory) Create(ctx context.Context) (Session, error) {
-	if err := validateConfig(f.cfg); err != nil {
+	if err := f.cfg.validateConfig(); err != nil {
 		return nil, err
 	}
 
@@ -37,7 +38,7 @@ func (f *SessionFactory) Create(ctx context.Context) (Session, error) {
 		}
 		cmd := exec.CommandContext(ctx, f.cfg.Command, f.cfg.Args...)
 		for key, value := range f.cfg.Env {
-			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", key, value))
+			cmd.Env = append(os.Environ(), fmt.Sprintf("%s=%s", key, value))
 		}
 		transport = &mcpSDK.CommandTransport{Command: cmd}
 	default:
@@ -50,30 +51,5 @@ func (f *SessionFactory) Create(ctx context.Context) (Session, error) {
 		return nil, fmt.Errorf("connect to MCP server: %w", err)
 	}
 
-	return &sdkSession{session: clientSession}, nil
-}
-
-func validateConfig(cfg Config) error {
-	if cfg.Transport == "" {
-		return fmt.Errorf("transport is required")
-	}
-
-	switch cfg.Transport {
-	case TransportRemote:
-		if cfg.ServerURL == "" {
-			return fmt.Errorf("server URL is required for remote transport")
-		}
-	case TransportStdio:
-		if cfg.Command == "" {
-			return fmt.Errorf("command is required for stdio transport")
-		}
-	default:
-		return fmt.Errorf("unsupported transport type: %s", cfg.Transport)
-	}
-
-	if cfg.ConnectTimeout < 0 {
-		return fmt.Errorf("connect timeout must be non-negative")
-	}
-
-	return nil
+	return &SDKSession{session: clientSession}, nil
 }

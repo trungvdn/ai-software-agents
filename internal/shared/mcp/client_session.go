@@ -8,15 +8,11 @@ import (
 	mcpSDK "github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-type sdkSession struct {
+type SDKSession struct {
 	session *mcpSDK.ClientSession
 }
 
-func NewSdkSession() *sdkSession {
-	return &sdkSession{}
-}
-
-func (s *sdkSession) ListTools(ctx context.Context) ([]ToolInfo, error) {
+func (s *SDKSession) ListTools(ctx context.Context) ([]ToolInfo, error) {
 	result, err := s.session.ListTools(ctx, &mcpSDK.ListToolsParams{})
 	if err != nil {
 		return nil, fmt.Errorf("list tools: %w", err)
@@ -32,7 +28,7 @@ func (s *sdkSession) ListTools(ctx context.Context) ([]ToolInfo, error) {
 	return tools, nil
 }
 
-func (s *sdkSession) CallTool(ctx context.Context, tool Tool, args any) (json.RawMessage, error) {
+func (s *SDKSession) CallTool(ctx context.Context, tool Tool, args any) (json.RawMessage, error) {
 	params := &mcpSDK.CallToolParams{
 		Name:      string(tool),
 		Arguments: args,
@@ -43,7 +39,7 @@ func (s *sdkSession) CallTool(ctx context.Context, tool Tool, args any) (json.Ra
 		return nil, fmt.Errorf("call tool %s: %w", tool, err)
 	}
 
-	payload, err := json.Marshal(result)
+	payload, err := json.Marshal(result.Content)
 	if err != nil {
 		return nil, fmt.Errorf("marshal tool result: %w", err)
 	}
@@ -51,6 +47,6 @@ func (s *sdkSession) CallTool(ctx context.Context, tool Tool, args any) (json.Ra
 	return payload, nil
 }
 
-func (s *sdkSession) Close() error {
+func (s *SDKSession) Close() error {
 	return s.session.Close()
 }
