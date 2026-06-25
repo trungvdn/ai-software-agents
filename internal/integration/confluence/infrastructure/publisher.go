@@ -4,16 +4,17 @@ import (
 	"context"
 
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
+	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/infrastructure/formatter"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/publish_requirement"
 )
 
 type ConfluencePublisher struct {
-	formatter        Formatter
+	formatter        formatter.Formatter
 	confluenceClient domain.ConfluenceClient
 }
 
 func NewConfluencePublisher(
-	formatter Formatter,
+	formatter formatter.Formatter,
 	confluenceClient domain.ConfluenceClient,
 ) *ConfluencePublisher {
 	return &ConfluencePublisher{

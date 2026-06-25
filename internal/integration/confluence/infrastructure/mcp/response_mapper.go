@@ -1,12 +1,11 @@
-package mapper
+package mcp
 
 import (
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
-	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/infrastructure/mcp"
 )
 
 func MapResponseToPage(
-	response mcp.CreatePageResponse,
+	response CreatePageResponse,
 ) domain.Page {
 	return domain.Page{
 		ID:      response.ID,
