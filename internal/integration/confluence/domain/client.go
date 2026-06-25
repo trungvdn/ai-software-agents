@@ -2,7 +2,7 @@ package domain
 
 import "context"
 
-type Client interface {
+type ConfluenceClient interface {
 	CreatePage(
 		ctx context.Context,
 		page Page,

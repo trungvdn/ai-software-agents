@@ -46,20 +46,24 @@ func (u *GenerateRequirementPackageUseCase) Execute(
 	}
 	allStories := make([]story.Story, 0)
 	group, ctx := errgroup.WithContext(ctx)
-	for _, epic := range epicResp.Epics {
+	results := make([][]story.Story, len(epicResp.Epics))
+	for i, epic := range epicResp.Epics {
 		epicItem := epic
 		group.Go(func() error {
 			storyResp, err := u.generateStoryUseCase.Generate(ctx, generate_story.GenerateStoryRequest{Epic: epicItem})
 			if err != nil {
 				return err
 			}
-			allStories = append(allStories, storyResp.Stories...)
+			results[i] = storyResp.Stories
 			return nil
 		})
 	}
 
 	if err := group.Wait(); err != nil {
 		return nil, err
+	}
+	for _, stories := range results {
+		allStories = append(allStories, stories...)
 	}
 
 	aggregate := requirement.NewRequirementAggregate(requirementResp.Requirement, epicResp.Epics, allStories)

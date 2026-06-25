@@ -1,9 +1,9 @@
-package confluence
+package infrastructure
 
 import (
 	"context"
 
-	"github.com/trungvdn/ai-software-agents/internal/intergration/confluence/domain"
+	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
 )
 
 type MCPConfluenceClient struct {
