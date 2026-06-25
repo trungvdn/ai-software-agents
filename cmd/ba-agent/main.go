@@ -9,6 +9,7 @@ import (
 	"github.com/trungvdn/ai-software-agents/internal/config"
 	"github.com/trungvdn/ai-software-agents/internal/database"
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/infrastructure"
+	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/infrastructure/mcp"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_epic"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_requirement"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_requirement_package"
@@ -66,7 +67,10 @@ func main() {
 				llm_infa.NewOllamaStoryGenerator(ollamaClient)),
 		),
 		publish_requirement.NewPublishRequirementUseCase(
-			infrastructure.NewConfluencePublisher(),
+			infrastructure.NewConfluencePublisher(
+				infrastructure.NewRequirementFormatter(),
+				mcp.NewMCPConfluenceClient(),
+			),
 		),
 	)
 	response, err := baAgent.Execute(context.Background(), ba.Request{
