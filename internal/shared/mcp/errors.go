@@ -3,6 +3,6 @@ package mcp
 import "errors"
 
 var (
-	ErrToolNotFound = errors.New("Tool Not Found")
-	ErrTimeout      = errors.New("Error Time Out")
+	ErrToolNotFound = errors.New("tool not found")
+	ErrCallTimeout  = errors.New("call timeout")
 )

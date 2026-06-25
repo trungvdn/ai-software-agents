@@ -6,8 +6,6 @@ type Client interface {
 	Call(
 		ctx context.Context,
 		request Request,
+		options CallOptions,
 	) (*Response, error)
-}
-
-type MCPClient struct {
 }
