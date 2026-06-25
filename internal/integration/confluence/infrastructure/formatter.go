@@ -138,8 +138,12 @@ func (r *RequirementFormatter) buildEpic(builder *markdown.MarkdownBuilder, epic
 	builder.H3("Stories")
 	for _, story := range epic.Stories {
 		builder.H4(story.Title)
-		builder.Paragraph("**As a** " + story.AsA + "\n\n")
-		builder.Paragraph("**I want** " + story.IWant + "\n\n")
-		builder.Paragraph("**So that** " + story.SoThat + "\n\n")
+		builder.Bold("As a")
+		builder.Paragraph(story.AsA)
+		builder.Bold("I want")
+		builder.Paragraph(story.IWant)
+		builder.Bold("So that")
+		builder.Paragraph(story.SoThat)
+
 	}
 }

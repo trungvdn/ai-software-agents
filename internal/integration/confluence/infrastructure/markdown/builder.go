@@ -46,6 +46,10 @@ func (b *MarkdownBuilder) Divider() {
 	b.builder.WriteString("---\n\n")
 }
 
+func (b *MarkdownBuilder) Bold(text string) {
+	b.builder.WriteString("**" + text + "**")
+}
+
 func (b *MarkdownBuilder) String() string {
 	return b.builder.String()
 }

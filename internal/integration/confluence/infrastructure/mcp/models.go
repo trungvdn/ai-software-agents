@@ -5,6 +5,8 @@ type CreatePageRequest struct {
 	ParentID string
 	Title    string
 	Content  string
+
+	// TODO: Labels support
 }
 
 type CreatePageResponse struct {
