@@ -7,4 +7,6 @@ type Page struct {
 	URL      string
 	ParentID string
 	SpaceKey string
+	Labels   []string
+	Version  int
 }

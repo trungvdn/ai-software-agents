@@ -1,6 +1,8 @@
 package infrastructure
 
 import (
+	"errors"
+
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/infrastructure/markdown"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/requirement"
@@ -66,6 +68,9 @@ func (r *RequirementFormatter) Format(
 
 		...
 	*/
+	if aggregate == nil {
+		return nil, errors.New("requirement aggregate is nil")
+	}
 	builder := &markdown.MarkdownBuilder{}
 	r.buildVision(builder, aggregate)
 	builder.Divider()
@@ -122,14 +127,19 @@ func (r *RequirementFormatter) buildEpics(builder *markdown.MarkdownBuilder, agg
 	*/
 	builder.H3("Epics")
 	for _, epic := range aggregate.Epics {
-		builder.H2(epic.Name).String()
-		builder.Paragraph(epic.Description)
-		builder.H3("Stories")
-		for _, story := range epic.Stories {
-			builder.H4(story.Title)
-			builder.Text("**As a** " + story.AsA + "\n\n")
-			builder.Text("**I want** " + story.IWant + "\n\n")
-			builder.Text("**So that** " + story.SoThat + "\n\n")
-		}
+		r.buildEpic(builder, epic)
+
+	}
+}
+
+func (r *RequirementFormatter) buildEpic(builder *markdown.MarkdownBuilder, epic requirement.EpicAggregate) {
+	builder.H2(epic.Name)
+	builder.Paragraph(epic.Description)
+	builder.H3("Stories")
+	for _, story := range epic.Stories {
+		builder.H4(story.Title)
+		builder.Paragraph("**As a** " + story.AsA + "\n\n")
+		builder.Paragraph("**I want** " + story.IWant + "\n\n")
+		builder.Paragraph("**So that** " + story.SoThat + "\n\n")
 	}
 }
