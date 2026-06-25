@@ -69,10 +69,15 @@ func (r *RequirementFormatter) Format(
 	builder := markdown.MarkdownBuilder{}
 	builder.H1("Vision")
 	builder.Paragraph(r.buildVision(aggregate))
+	builder.Divider()
 	builder.H2("Goals")
-	builder.Bullet(r.buildGoals(aggregate))
+	for _, goal := range r.buildGoals(aggregate) {
+		builder.Bullet(goal)
+	}
+	builder.Divider()
 	builder.H3("Epics")
 	builder.Paragraph(r.buildEpics(aggregate))
+	builder.Divider()
 	builder.Bullet(r.buildStories(aggregate))
 
 	return &domain.Page{
@@ -82,17 +87,17 @@ func (r *RequirementFormatter) Format(
 }
 
 func (r *RequirementFormatter) buildTitle(aggregate *requirement.RequirementAggregate) string {
-	return ""
+	return aggregate.Requirement.ProjectName
 }
 
 func (r *RequirementFormatter) buildVision(aggregate *requirement.RequirementAggregate) string {
 	return aggregate.Requirement.Vision
 }
 
-func (r *RequirementFormatter) buildGoals(aggregate *requirement.RequirementAggregate) string {
-	goals := ""
+func (r *RequirementFormatter) buildGoals(aggregate *requirement.RequirementAggregate) []string {
+	goals := []string{}
 	for _, goal := range aggregate.Requirement.Goals {
-		goals += "- " + goal.Description + "\n"
+		goals = append(goals, goal.Description)
 	}
 	return goals
 }
@@ -119,10 +124,10 @@ func (r *RequirementFormatter) buildEpics(aggregate *requirement.RequirementAggr
 	*/
 	epics := ""
 	for _, epic := range aggregate.Epics {
-		epics += "## " + epic.Description + "\n\n"
+		epics += "## " + epic.Name + "\n\n"
 		epics += epic.Description + "\n\n"
 		epics += "### Stories\n\n"
-		for _, story := range aggregate.Stories {
+		for _, story := range epic.Stories {
 			epics += "#### " + story.Title + "\n\n"
 			epics += story.Title + "\n\n"
 		}

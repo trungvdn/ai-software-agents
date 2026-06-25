@@ -7,10 +7,14 @@ import (
 	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/story"
 )
 
+type EpicAggregate struct {
+	epic.Epic
+	Stories []story.Story
+}
+
 type RequirementAggregate struct {
 	Requirement Requirement
-	Epics       []epic.Epic
-	Stories     []story.Story
+	Epics       []EpicAggregate
 }
 
 type RequirementAggregateRepository interface {
@@ -25,10 +29,9 @@ type RequirementAggregateRepository interface {
 	) (*RequirementAggregate, error)
 }
 
-func NewRequirementAggregate(requirement Requirement, epics []epic.Epic, stories []story.Story) *RequirementAggregate {
+func NewRequirementAggregate(requirement Requirement, epics []EpicAggregate) *RequirementAggregate {
 	return &RequirementAggregate{
 		Requirement: requirement,
 		Epics:       epics,
-		Stories:     stories,
 	}
 }

@@ -42,6 +42,10 @@ func (b *MarkdownBuilder) Paragraph(text string) *MarkdownBuilder {
 	return b
 }
 
+func (b *MarkdownBuilder) Divider() {
+	b.builder.WriteString("---\n\n")
+}
+
 func (b *MarkdownBuilder) String() string {
 	return b.builder.String()
 }
