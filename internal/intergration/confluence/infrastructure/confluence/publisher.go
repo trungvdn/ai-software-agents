@@ -7,6 +7,7 @@ import (
 )
 
 type ConfluencePublisher struct {
+	formatter Formatter
 }
 
 func NewConfluencePublisher() *ConfluencePublisher {
@@ -15,10 +16,11 @@ func NewConfluencePublisher() *ConfluencePublisher {
 
 func (p *ConfluencePublisher) Publish(
 	ctx context.Context,
-	request publish_requirement.PublishRequirementRequest,
+	page publish_requirement.PublishRequirementRequest,
 ) error {
 	// Implement the logic to publish the content to Confluence
 	// For example, you can use the Confluence API to create a new page or update an existing one
 	// You may need to authenticate with the Confluence API and handle any errors that may occur during the publishing process
+
 	return nil
 }

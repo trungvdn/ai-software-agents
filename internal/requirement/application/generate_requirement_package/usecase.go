@@ -3,6 +3,8 @@ package generate_requirement_package
 import (
 	"context"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_epic"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_requirement"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/application/generate_story"
@@ -43,12 +45,21 @@ func (u *GenerateRequirementPackageUseCase) Execute(
 		return nil, err
 	}
 	allStories := make([]story.Story, 0)
+	group, ctx := errgroup.WithContext(ctx)
 	for _, epic := range epicResp.Epics {
-		storyResp, err := u.generateStoryUseCase.Generate(ctx, generate_story.GenerateStoryRequest{Epic: epic})
-		if err != nil {
-			return nil, err
-		}
-		allStories = append(allStories, storyResp.Stories...)
+		epicItem := epic
+		group.Go(func() error {
+			storyResp, err := u.generateStoryUseCase.Generate(ctx, generate_story.GenerateStoryRequest{Epic: epicItem})
+			if err != nil {
+				return err
+			}
+			allStories = append(allStories, storyResp.Stories...)
+			return nil
+		})
+	}
+
+	if err := group.Wait(); err != nil {
+		return nil, err
 	}
 
 	aggregate := requirement.NewRequirementAggregate(requirementResp.Requirement, epicResp.Epics, allStories)
