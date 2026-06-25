@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
-	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/infrastructure/markdown"
 	"github.com/trungvdn/ai-software-agents/internal/requirement/domain/requirement"
 )
 
@@ -71,7 +70,7 @@ func (r *RequirementFormatter) Format(
 	if aggregate == nil {
 		return nil, errors.New("requirement aggregate is nil")
 	}
-	builder := &markdown.MarkdownBuilder{}
+	builder := &MarkdownBuilder{}
 	r.buildVision(builder, aggregate)
 	builder.Divider()
 	r.buildGoals(builder, aggregate)
@@ -89,13 +88,13 @@ func (r *RequirementFormatter) buildTitle(aggregate *requirement.RequirementAggr
 	return aggregate.Requirement.ProjectName
 }
 
-func (r *RequirementFormatter) buildVision(builder *markdown.MarkdownBuilder, aggregate *requirement.RequirementAggregate) {
+func (r *RequirementFormatter) buildVision(builder *MarkdownBuilder, aggregate *requirement.RequirementAggregate) {
 	builder.H1("Vision")
 	builder.Paragraph(aggregate.Requirement.Vision)
 }
 
 func (r *RequirementFormatter) buildGoals(
-	builder *markdown.MarkdownBuilder,
+	builder *MarkdownBuilder,
 	aggregate *requirement.RequirementAggregate,
 ) {
 	builder.H2("Goals")
@@ -105,7 +104,7 @@ func (r *RequirementFormatter) buildGoals(
 	}
 }
 
-func (r *RequirementFormatter) buildEpics(builder *markdown.MarkdownBuilder, aggregate *requirement.RequirementAggregate) {
+func (r *RequirementFormatter) buildEpics(builder *MarkdownBuilder, aggregate *requirement.RequirementAggregate) {
 	/*
 		## Portfolio Management
 
@@ -132,7 +131,7 @@ func (r *RequirementFormatter) buildEpics(builder *markdown.MarkdownBuilder, agg
 	}
 }
 
-func (r *RequirementFormatter) buildEpic(builder *markdown.MarkdownBuilder, epic requirement.EpicAggregate) {
+func (r *RequirementFormatter) buildEpic(builder *MarkdownBuilder, epic requirement.EpicAggregate) {
 	builder.H2(epic.Name)
 	builder.Paragraph(epic.Description)
 	builder.H3("Stories")

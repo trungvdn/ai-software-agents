@@ -1,11 +1,13 @@
 package mcp
 
+type Tool string
+
 const (
-	ToolConfluenceCreatePage = "confluence_create_page"
+	ToolConfluenceCreatePage Tool = "confluence_create_page"
 
-	ToolConfluenceUpdatePage = "confluence_update_page"
+	ToolConfluenceUpdatePage Tool = "confluence_update_page"
 
-	ToolJiraCreateIssue = "jira_create_issue"
+	ToolJiraCreateIssue Tool = "jira_create_issue"
 
-	ToolGitHubCreatePR = "github_create_pr"
+	ToolGitHubCreatePR Tool = "github_create_pr"
 )

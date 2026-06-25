@@ -2,8 +2,7 @@ package mcp
 
 import (
 	"context"
-
-	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"errors"
 )
 
 type SessionFactory struct {
@@ -20,6 +19,8 @@ func NewSessionFactory(
 
 func (f *SessionFactory) Create(
 	ctx context.Context,
-) (*mcp.ClientSession, error) {
-	return &mcp.ClientSession{}, nil
+) (Session, error) {
+	return nil, errors.New(
+		"not implemented",
+	)
 }
