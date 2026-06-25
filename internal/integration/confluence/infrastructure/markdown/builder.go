@@ -51,7 +51,7 @@ func (b *MarkdownBuilder) Bold(text string) *MarkdownBuilder {
 	return b
 }
 
-func (b *MarkdownBuilder) BoldParagraph(bold string, text string) *MarkdownBuilder {
+func (b *MarkdownBuilder) LabeledParagraph(bold string, text string) *MarkdownBuilder {
 	b.builder.WriteString("**" + bold + "** " + text + "\n\n")
 	return b
 }
