@@ -2,7 +2,6 @@ package mcp
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/trungvdn/ai-software-agents/internal/integration/confluence/domain"
@@ -36,7 +35,7 @@ func (c *MCPConfluenceClient) CreatePage(
 			Arguments: req,
 		},
 		mcp.CallOptions{
-			Timeout: 30 * time.Second,
+			Timeout: c.timeout,
 		},
 	)
 	if err != nil {
@@ -44,7 +43,7 @@ func (c *MCPConfluenceClient) CreatePage(
 	}
 	createResp, ok := resp.Result.(CreatePageResponse)
 	if !ok {
-		return nil, errors.New("unexpected response type")
+		return nil, mcp.ErrUnexpectedResponseType
 	}
 	result := mapResponseToPage(createResp)
 	result.Title = page.Title
