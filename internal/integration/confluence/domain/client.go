@@ -6,7 +6,7 @@ type ConfluenceClient interface {
 	CreatePage(
 		ctx context.Context,
 		page Page,
-	) error
+	) (*Page, error)
 
 	UpdatePage(
 		ctx context.Context,

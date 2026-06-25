@@ -11,14 +11,14 @@ type Formatter interface {
 	) (*domain.Page, error)
 }
 
-type ConfluenceFormatter struct {
+type RequirementFormatter struct {
 }
 
-func NewConfluenceFormatter() *ConfluenceFormatter {
-	return &ConfluenceFormatter{}
+func NewConfluenceFormatter() *RequirementFormatter {
+	return &RequirementFormatter{}
 }
 
-func (f *ConfluenceFormatter) Format(
+func (f *RequirementFormatter) Format(
 	aggregate *requirement.RequirementAggregate,
 ) (*domain.Page, error) {
 	// Implement the logic to format the requirement aggregate into a Confluence page

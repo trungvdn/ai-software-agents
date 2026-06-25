@@ -12,8 +12,14 @@ type ConfluencePublisher struct {
 	confluenceClient domain.ConfluenceClient
 }
 
-func NewConfluencePublisher() *ConfluencePublisher {
-	return &ConfluencePublisher{}
+func NewConfluencePublisher(
+	formatter Formatter,
+	confluenceClient domain.ConfluenceClient,
+) *ConfluencePublisher {
+	return &ConfluencePublisher{
+		formatter:        formatter,
+		confluenceClient: confluenceClient,
+	}
 }
 func (c *ConfluencePublisher) Publish(
 	ctx context.Context,
@@ -27,7 +33,7 @@ func (c *ConfluencePublisher) Publish(
 		return err
 	}
 
-	err = c.confluenceClient.CreatePage(ctx, *page)
+	_, err = c.confluenceClient.CreatePage(ctx, *page)
 	if err != nil {
 		return err
 	}

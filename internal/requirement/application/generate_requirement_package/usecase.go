@@ -48,13 +48,14 @@ func (u *GenerateRequirementPackageUseCase) Execute(
 	group, ctx := errgroup.WithContext(ctx)
 	results := make([][]story.Story, len(epicResp.Epics))
 	for i, epic := range epicResp.Epics {
+		idx := i
 		epicItem := epic
 		group.Go(func() error {
 			storyResp, err := u.generateStoryUseCase.Generate(ctx, generate_story.GenerateStoryRequest{Epic: epicItem})
 			if err != nil {
 				return err
 			}
-			results[i] = storyResp.Stories
+			results[idx] = storyResp.Stories
 			return nil
 		})
 	}
