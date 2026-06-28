@@ -2,7 +2,7 @@ package oauth
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	sdkauth "github.com/modelcontextprotocol/go-sdk/auth"
 )
@@ -29,7 +29,8 @@ func (a *AuthorizationCodeFetcher) Fetch(ctx context.Context, args *sdkauth.Auth
 	defer a.callback.Stop(ctx)
 
 	if err := a.browser.Open(args.URL); err != nil {
-		fmt.Printf("Open the following URL in a browser to continue authorization:\n%s\n", args.URL)
+		log.Printf("Open the following URL in a browser to continue authorization:\n%s\n", args.URL)
+		return nil, err
 	}
 	results, err := a.callback.Wait(ctx)
 	if err != nil {

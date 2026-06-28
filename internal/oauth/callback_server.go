@@ -3,6 +3,8 @@ package oauth
 import (
 	"context"
 	"fmt"
+	"log"
+	"net"
 	"net/http"
 
 	"github.com/modelcontextprotocol/go-sdk/auth"
@@ -11,7 +13,7 @@ import (
 type CallbackServer struct {
 	resultCh chan *auth.AuthorizationResult
 	errCh    chan error
-	server   *http.Server
+	lis      net.Listener
 }
 
 func NewCallbackServer() *CallbackServer {
@@ -22,11 +24,8 @@ func NewCallbackServer() *CallbackServer {
 }
 
 func (s *CallbackServer) Start(addr string) error {
+	log.Printf("Stgartt==")
 	mux := http.NewServeMux()
-	s.server = &http.Server{
-		Addr:    addr,
-		Handler: mux,
-	}
 
 	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query()
@@ -41,12 +40,20 @@ func (s *CallbackServer) Start(addr string) error {
 		fmt.Fprintln(w, "Authorization complete. You may close this window.")
 		s.resultCh <- &auth.AuthorizationResult{Code: code, State: state}
 	})
-
+	log.Printf("Listen==")
 	go func() {
-		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		ln, err := net.Listen("tcp", addr)
+		if err != nil {
+			log.Printf("Error net.Listen( : %s", err.Error())
 			s.errCh <- err
 		}
+		if err = http.Serve(ln, mux); err != nil {
+			log.Printf("Error  http.Serve(: %s", err.Error())
+			s.errCh <- err
+		}
+		s.lis = ln
 	}()
+
 	return nil
 }
 
@@ -66,8 +73,5 @@ func (s *CallbackServer) Wait(
 func (s *CallbackServer) Stop(
 	ctx context.Context,
 ) error {
-	if s == nil || s.server == nil {
-		return nil
-	}
-	return s.server.Shutdown(ctx)
+	return s.lis.Close()
 }

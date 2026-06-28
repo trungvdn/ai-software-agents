@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"errors"
+	"log"
 	"runtime"
 
 	sdkauth "github.com/modelcontextprotocol/go-sdk/auth"
@@ -19,10 +20,12 @@ func NewAuthorizationCodeHandler(
 	cfg OAuthConfig,
 ) (*sdkauth.AuthorizationCodeHandler, error) {
 	callback := NewCallbackServer()
+	log.Printf("getBrowserFactory")
 	brs, err := getBrowserFactory()
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("%T", brs)
 
 	fetcher := NewAuthorizationCodeFetcher(
 		brs,
