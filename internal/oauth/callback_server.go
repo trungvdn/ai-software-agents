@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -46,8 +47,8 @@ func (s *CallbackServer) Start(addr string) error {
 	}
 	s.lis = ln
 	go func() {
-		if err = http.Serve(ln, mux); err != nil {
-			log.Printf("Error  http.Serve(: %s", err.Error())
+		if err := http.Serve(ln, mux); err != nil &&
+			!errors.Is(err, net.ErrClosed) {
 			s.errCh <- err
 		}
 	}()
