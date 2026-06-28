@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"time"
 
 	mcpSDK "github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/trungvdn/ai-software-agents/internal/oauth"
 )
 
 type SessionFactory struct {
@@ -19,7 +21,7 @@ func NewSessionFactory(cfg Config) *SessionFactory {
 }
 
 func (f *SessionFactory) Create(ctx context.Context) (Session, error) {
-	if err := f.cfg.validateConfig(); err != nil {
+	if err := f.cfg.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -28,24 +30,43 @@ func (f *SessionFactory) Create(ctx context.Context) (Session, error) {
 
 	switch f.cfg.Transport {
 	case TransportRemote:
-		if f.cfg.ServerURL == "" {
+		if f.cfg.Remote.ServerURL == "" {
 			return nil, fmt.Errorf("server URL is required for remote transport")
 		}
-		transport = &mcpSDK.StreamableClientTransport{Endpoint: f.cfg.ServerURL, HTTPClient: &http.Client{Timeout: f.cfg.ConnectTimeout}}
+		if f.cfg.ConnectTimeout <= 0 {
+			f.cfg.ConnectTimeout = 30 * time.Second
+		}
+		httpClient := &http.Client{Timeout: f.cfg.ConnectTimeout}
+		handler, err := oauth.NewAuthorizationCodeHandler(oauth.OAuthConfig{
+			ClientID:    "",
+			RedirectURI: "http://localhost:8080/callback",
+		})
+		if err != nil {
+			return nil, err
+		}
+		transport = &mcpSDK.StreamableClientTransport{
+			Endpoint:     f.cfg.Remote.ServerURL,
+			HTTPClient:   httpClient,
+			OAuthHandler: handler,
+		}
 	case TransportStdio:
-		if f.cfg.Command == "" {
+		if f.cfg.Stdio.Command == "" {
 			return nil, fmt.Errorf("command is required for stdio transport")
 		}
-		cmd := exec.CommandContext(ctx, f.cfg.Command, f.cfg.Args...)
-		for key, value := range f.cfg.Env {
-			cmd.Env = append(os.Environ(), fmt.Sprintf("%s=%s", key, value))
+		cmd := exec.CommandContext(ctx, f.cfg.Stdio.Command, f.cfg.Stdio.Args...)
+		cmd.Env = os.Environ()
+		for key, value := range f.cfg.Stdio.Env {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", key, value))
 		}
 		transport = &mcpSDK.CommandTransport{Command: cmd}
 	default:
 		return nil, fmt.Errorf("unsupported transport type: %s", f.cfg.Transport)
 	}
-
-	client := mcpSDK.NewClient(&mcpSDK.Implementation{Name: "ai-software-agents", Version: "1.0.0"}, nil)
+	client := mcpSDK.NewClient(
+		&mcpSDK.Implementation{
+			Name:    f.cfg.Client.Name,
+			Version: f.cfg.Client.Version,
+		}, &mcpSDK.ClientOptions{})
 	clientSession, err := client.Connect(ctx, transport, &mcpSDK.ClientSessionOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("connect to MCP server: %w", err)
