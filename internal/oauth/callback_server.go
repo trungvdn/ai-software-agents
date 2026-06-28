@@ -24,7 +24,6 @@ func NewCallbackServer() *CallbackServer {
 }
 
 func (s *CallbackServer) Start(addr string) error {
-	log.Printf("Stgartt==")
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
@@ -40,18 +39,17 @@ func (s *CallbackServer) Start(addr string) error {
 		fmt.Fprintln(w, "Authorization complete. You may close this window.")
 		s.resultCh <- &auth.AuthorizationResult{Code: code, State: state}
 	})
-	log.Printf("Listen==")
+	ln, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Printf("Error net.Listen( : %s", err.Error())
+		s.errCh <- err
+	}
+	s.lis = ln
 	go func() {
-		ln, err := net.Listen("tcp", addr)
-		if err != nil {
-			log.Printf("Error net.Listen( : %s", err.Error())
-			s.errCh <- err
-		}
 		if err = http.Serve(ln, mux); err != nil {
 			log.Printf("Error  http.Serve(: %s", err.Error())
 			s.errCh <- err
 		}
-		s.lis = ln
 	}()
 
 	return nil
@@ -70,8 +68,9 @@ func (s *CallbackServer) Wait(
 	}
 }
 
-func (s *CallbackServer) Stop(
-	ctx context.Context,
-) error {
+func (s *CallbackServer) Stop() error {
+	if s.lis == nil {
+		return nil
+	}
 	return s.lis.Close()
 }

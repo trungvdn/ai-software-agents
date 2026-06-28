@@ -26,7 +26,7 @@ func (a *AuthorizationCodeFetcher) Fetch(ctx context.Context, args *sdkauth.Auth
 	if err := a.callback.Start("127.0.0.1:8080"); err != nil {
 		return nil, err
 	}
-	defer a.callback.Stop(ctx)
+	defer a.callback.Stop()
 
 	if err := a.browser.Open(args.URL); err != nil {
 		log.Printf("Open the following URL in a browser to continue authorization:\n%s\n", args.URL)

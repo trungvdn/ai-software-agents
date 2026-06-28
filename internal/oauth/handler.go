@@ -25,7 +25,6 @@ func NewAuthorizationCodeHandler(
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("%T", brs)
 
 	fetcher := NewAuthorizationCodeFetcher(
 		brs,
