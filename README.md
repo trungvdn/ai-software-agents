@@ -7,6 +7,24 @@ This project is designed to learn and master AI Agents by building a multi-agent
 
 **Future Application**: The learnings will be applied to build **InvestPilot**, an intelligent information investment system powered by coordinated AI agents to analyze market data, generate insights, and recommend investment strategies.
 
+## Recent Infrastructure Update
+| Item | Before Optimization | After Optimization | Improvement |
+| --- | --- | --- | --- |
+| **Inference Backend** | CPU | RTX 2060 CUDA | ✅ Switched to GPU |
+| **Model Offloading** | 0 layer GPU | 24/29 layers on GPU | ✅ Most model layers on GPU |
+| **VRAM Usage** | 0 MB | ~4039 MB | ✅ Utilizes GPU memory |
+| **GPU Memory Headroom** | N/A | ~1065 MB | Stable headroom available |
+| **Concurrent Requests** | 1 | 2 | **2×** |
+| **Slots** | 1 (`slot0`) | 2 (`slot0`, `slot1`) | **2×** |
+| **Total Context** | 4096 | 8192 | **2×** |
+| **Prompt Cache** | Fresh start | 202 → 333 MB | Cache efficiency improving |
+| **Prompt Similarity** | Insignificant | 0.43 – 0.63 | Better prompt reuse |
+| **Graph Reuse** | Low | 2732 → 4317 | Continuous increase |
+| **Prompt Evaluation** | ~4 token/s (cold) | 274–694 token/s (warm) | **≈60–150×** |
+| **Generation Speed / Request** | ~25 token/s | ~21–22 token/s | Slight decrease due to parallelism |
+| **Total Throughput** | ~25 token/s | ~44 token/s | **≈+76%** |
+| **Queue** | None | None | No bottleneck |
+
 # Final Vision
 
 ```
@@ -93,8 +111,11 @@ Running Software
 ✅ Generate story.<br>
 ✅ Orchestrator workflow.<br>
 ❌ Publish to Confluence<br>
-❌ Human in loop
-
+    - Formatted the page
+    - Using Remote MCP Confluence (Go SDK: https://github.com/modelcontextprotocol/go-sdk)
+    - Authenticated with OAuth 2.0
+    - Issue report/discussion: https://community.atlassian.com/forums/Rovo-questions/Atlassian-Remote-MCP-tools-fail-during-execution-despite/qaq-p/3253923#M4876
+❌ Human in loop<br>
 **Milestone:** BA Agent can create requirement, epics, story
 
 ## Phase 4 - Planner Agent
