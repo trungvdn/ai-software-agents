@@ -3,27 +3,27 @@ package oauth
 import (
 	"context"
 	"fmt"
-	"net"
 	"net/http"
 
 	"github.com/modelcontextprotocol/go-sdk/auth"
 )
 
 type CallbackServer struct {
-	listener net.Listener
 	resultCh chan *auth.AuthorizationResult
 	errCh    chan error
+	server   *http.Server
 }
 
 func NewCallbackServer() *CallbackServer {
 	return &CallbackServer{
 		resultCh: make(chan *auth.AuthorizationResult, 1),
+		errCh:    make(chan error, 1),
 	}
 }
 
 func (s *CallbackServer) Start(addr string) error {
 	mux := http.NewServeMux()
-	srv := &http.Server{
+	s.server = &http.Server{
 		Addr:    addr,
 		Handler: mux,
 	}
@@ -43,7 +43,7 @@ func (s *CallbackServer) Start(addr string) error {
 	})
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			s.errCh <- err
 		}
 	}()
@@ -56,6 +56,8 @@ func (s *CallbackServer) Wait(
 	select {
 	case res := <-s.resultCh:
 		return res, nil
+	case err := <-s.errCh:
+		return nil, err
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	}
@@ -64,5 +66,8 @@ func (s *CallbackServer) Wait(
 func (s *CallbackServer) Stop(
 	ctx context.Context,
 ) error {
-	return s.listener.Close()
+	if s == nil || s.server == nil {
+		return nil
+	}
+	return s.server.Shutdown(ctx)
 }
