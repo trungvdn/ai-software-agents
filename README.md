@@ -61,6 +61,9 @@ Running Software
 ---
 
 ## Recent Infrastructure Update
+
+## Date: 28-06-2026
+
 | Item | Before Optimization | After Optimization | Improvement |
 | --- | --- | --- | --- |
 | **Inference Backend** | CPU | RTX 2060 CUDA | ✅ Switched to GPU |
@@ -118,10 +121,10 @@ Running Software
     - Using Remote MCP Confluence (Go SDK: https://github.com/modelcontextprotocol/go-sdk)<br>
     - Authenticated with OAuth 2.0<br>
     *Note
-        - Token generation was very slow; it was optimized by <br>
-            + Golang app concurrency <br>
-            + LLM engine concurrency, including prompt caching and parallelism <br>
-        => After optimization, see the Recent Infrastructure Update section <br>
+        - Token generation was very slow, although some LLM engines such as vLLM and SGLang (with strong continuous batching and Paged/Radix Attention optimizations) improve parallel processing, this stage is primarily for learning and development, so the best approach is to optimize the Ollama engine and the current Go runtime concurrency.<br>
+            + Go runtime concurrency <br>
+            + LLM engine runtime concurrency, including prompt caching and parallelism <br>
+        => After optimization, see the **Recent Infrastructure Update** section <br>
         - I encountered an issue when authenticating; see the issue report/discussion: https://community.atlassian.com/forums/Rovo-questions/Atlassian-Remote-MCP-tools-fail-during-execution-despite/qaq-p/3253923#M4876<br>
         
 ❌ Human in loop<br>
