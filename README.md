@@ -111,10 +111,10 @@ Running Software
 ✅ Generate story.<br>
 ✅ Orchestrator workflow.<br>
 ❌ Publish to Confluence<br>
-    - Formatted the page
-    - Using Remote MCP Confluence (Go SDK: https://github.com/modelcontextprotocol/go-sdk)
-    - Authenticated with OAuth 2.0
-    - Issue report/discussion: https://community.atlassian.com/forums/Rovo-questions/Atlassian-Remote-MCP-tools-fail-during-execution-despite/qaq-p/3253923#M4876
+    - Formatted the page<br>
+    - Using Remote MCP Confluence (Go SDK: https://github.com/modelcontextprotocol/go-sdk)<br>
+    - Authenticated with OAuth 2.0<br>
+    - Issue report/discussion: https://community.atlassian.com/forums/Rovo-questions/Atlassian-Remote-MCP-tools-fail-during-execution-despite/qaq-p/3253923#M4876<br>
 ❌ Human in loop<br>
 **Milestone:** BA Agent can create requirement, epics, story
 
